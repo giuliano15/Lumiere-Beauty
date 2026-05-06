@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  ADMIN
+  EDITOR
+}
+
+enum SectionType {
+  HERO
+  LIVE
+  LANCAMENTOS
+  DESTAQUES
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(EDITOR)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id           String            @id @default(cuid())
+  name         String
+  slug         String            @unique
+  sku          String?           @unique
+  description  String?
+  shortDesc    String?
+  price        Decimal           @db.Decimal(10, 2)
+  promoPrice   Decimal?          @db.Decimal(10, 2)
+  stock        Int               @default(0)
+  brand        String?
+  isActive     Boolean           @default(true)
+  isFeatured   Boolean           @default(false)
+  categoryId   String
+  category     Category          @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  images       ProductImage[]
+  sectionItems HomeSectionItem[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([categoryId, isActive])
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model HomeSectionItem {
+  id        String      @id @default(cuid())
+  type      SectionType
+  productId String
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sortOrder Int         @default(0)
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([type, productId])
+}
+
+model Setting {
+  id                String   @id @default("global")
+  storeName         String   @default("Lumiere Beauty")
+  whatsappNumber    String
+  pixDiscount       Int      @default(15)
+  shippingText      String?
+  installmentsText  String?
+  supportText       String?
+  instagramUrl      String?
+  tiktokUrl         String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}

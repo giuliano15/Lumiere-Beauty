@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="description"
+    content="Loja feminina premium de maquiagem com experiencia completa e fechamento no WhatsApp."
+  />
+  <title>Lumiere Beauty | Loja Premium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div class="top-bar">
+    <p>Frete para todo Brasil | Atendentes especialistas em beleza | WhatsApp rapido</p>
+  </div>
+
+  <header class="header-wrap">
+    <div class="header container">
+      <button id="open-menu" class="icon-btn mobile-only" type="button" aria-label="Abrir menu">☰</button>
+      <a href="index.html" class="logo">Lumiere Beauty</a>
+      <nav id="mobile-nav" class="nav">
+        <a href="produtos.html">Todos</a>
+        <a href="pele.html">Pele</a>
+        <a href="olhos.html">Olhos</a>
+        <a href="labios.html">Labios</a>
+        <a href="skincare.html">Skincare</a>
+        <a href="kits.html">Kits</a>
+      </nav>
+      <div class="header-tools">
+        <label class="search-box" for="search-products">
+          <input id="search-products" type="search" placeholder="Buscar produto..." />
+        </label>
+        <button id="open-cart" class="button button-dark" type="button">
+          <i class="bi bi-bag"></i> Carrinho <span id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="brand-strip">
+    <div class="container brand-scroll">
+      <span>Max Love</span><span>Ruby Rose</span><span>Fenzza</span><span>Mia Make</span>
+      <span>Mahav</span><span>Belle Angel</span><span>Dalla</span><span>Miss Lary</span>
+      <span>Pink 21</span><span>Vivai</span><span>City Girls</span><span>Face Beautiful</span>
+    </div>
+  </section>
+
+  <section class="container trust-strip">
+    <article><strong>6x sem juros</strong><p>Pague no cartao com seguranca</p></article>
+    <article><strong>15% OFF no Pix</strong><p>Economia para pagamento a vista</p></article>
+    <article><strong>Entrega nacional</strong><p>Envio para todo o Brasil</p></article>
+    <article><strong>Atendimento humanizado</strong><p>Suporte rapido no WhatsApp</p></article>
+  </section>
+
+  <main>
+    <section class="container campaign section">
+      <div class="campaign-slider">
+        <article class="campaign-slide active">
+          <h2>Semana Glow: ate 20% OFF em kits selecionados</h2>
+          <p>Compre pela loja, monte seu carrinho e finalize no WhatsApp com atendimento VIP.</p>
+        </article>
+        <article class="campaign-slide">
+          <h2>Lancamentos da estacao com acabamento profissional</h2>
+          <p>Novas texturas para pele, labios e olhos com visual sofisticado.</p>
+        </article>
+        <article class="campaign-slide">
+          <h2>Frete promocional para pedidos acima de R$ 199</h2>
+          <p>Aproveite para montar seu estoque com os produtos mais pedidos.</p>
+        </article>
+      </div>
+      <div class="campaign-dots">
+        <button class="dot active" data-slide="0" type="button"></button>
+        <button class="dot" data-slide="1" type="button"></button>
+        <button class="dot" data-slide="2" type="button"></button>
+      </div>
+    </section>
+
+    <section class="hero hero-full">
+      <div class="hero-visual hero-visual-only">
+        <div class="hero-product-slider">
+          <a class="hero-product-slide" data-hero-slide="0" href="#produtos">
+            <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Destaque de maquiagem premium" />
+            <span class="hero-caption">Glow Week: ate 20% OFF em itens de pele</span>
+          </a>
+          <a class="hero-product-slide" data-hero-slide="1" href="#produtos">
+            <img src="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Paleta e produtos femininos" />
+            <span class="hero-caption">Lancamentos de olhos: paletas mais vendidas</span>
+          </a>
+          <a class="hero-product-slide" data-hero-slide="2" href="#produtos">
+            <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Kit de maquiagem para vitrine" />
+            <span class="hero-caption">Kits premium com preco especial da semana</span>
+          </a>
+          <a class="hero-product-slide" data-hero-slide="3" href="#produtos">
+            <img src="https://images.pexels.com/photos/2693644/pexels-photo-2693644.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Paleta premium para olhos" />
+            <span class="hero-caption">Olhos marcantes com tons sofisticados</span>
+          </a>
+          <a class="hero-product-slide" data-hero-slide="4" href="#produtos">
+            <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Produtos femininos premium" />
+            <span class="hero-caption">Skincare e maquiagem para rotacao rapida</span>
+          </a>
+          <button id="hero-prev" class="hero-nav" type="button" aria-label="Slide anterior">‹</button>
+          <button id="hero-next" class="hero-nav" type="button" aria-label="Proximo slide">›</button>
+        </div>
+        <div class="hero-product-dots">
+          <button class="hero-dot active" data-hero-dot="0" type="button"></button>
+          <button class="hero-dot" data-hero-dot="1" type="button"></button>
+          <button class="hero-dot" data-hero-dot="2" type="button"></button>
+          <button class="hero-dot" data-hero-dot="3" type="button"></button>
+          <button class="hero-dot" data-hero-dot="4" type="button"></button>
+        </div>
+        <div class="hero-progress">
+          <span id="hero-progress-bar"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="container section" id="live">
+      <div class="section-head section-head-row">
+        <div>
+          <h2>Live - Confira nossos produtos para sua loja</h2>
+          <p>Separamos os melhores produtos da loja de 10 e premium.</p>
+        </div>
+        <a class="button button-buy all-products-btn" href="produtos.html">Todos os produtos</a>
+      </div>
+      <div class="featured-carousel-wrap">
+        <button id="featured-prev" class="featured-nav-btn" type="button" aria-label="Anterior">❮</button>
+        <div id="featured-carousel" class="featured-carousel">
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Batom premium" />
+            <div><h3>Batom Velvet Kiss</h3><p>Cor intensa e acabamento acetinado.</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Paleta de sombras" />
+            <div><h3>Paleta Satin Glow</h3><p>Tons sofisticados para dia e noite.</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Base liquida" />
+            <div><h3>Base Air Skin</h3><p>Cobertura leve com efeito natural.</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Pinceis de maquiagem" />
+            <div><h3>Kit Brush Pro</h3><p>Precisao e maciez para acabamento premium.</p></div>
+          </article>
+        </div>
+        <button id="featured-next" class="featured-nav-btn" type="button" aria-label="Proximo">❯</button>
+      </div>
+    </section>
+
+    <section class="container section" id="produtos">
+      <div class="section-head">
+        <h2>Lancamentos</h2>
+        <p>Novidades da semana com alto giro para revenda.</p>
+      </div>
+      <div class="featured-carousel-wrap">
+        <button id="launch-prev" class="featured-nav-btn" type="button" aria-label="Anterior">❮</button>
+        <div id="launch-carousel" class="featured-carousel">
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Base Velvet Glow" />
+            <div><h3>Base Velvet Glow</h3><p>R$ 69,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Batom Satin Rose" />
+            <div><h3>Batom Satin Rose</h3><p>R$ 44,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Paleta Aurora 12 Cores" />
+            <div><h3>Paleta Aurora 12 Cores</h3><p>R$ 89,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Serum Glow Skin" />
+            <div><h3>Serum Glow Skin</h3><p>R$ 58,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Kit Essencial Femme" />
+            <div><h3>Kit Essencial Femme</h3><p>R$ 149,90</p></div>
+          </article>
+        </div>
+        <button id="launch-next" class="featured-nav-btn" type="button" aria-label="Proximo">❯</button>
+      </div>
+    </section>
+
+    <section class="container section" id="colecoes">
+      <div class="section-head">
+        <h2>Destaques</h2>
+        <p>Produtos mais pedidos com melhor margem para sua loja.</p>
+      </div>
+      <div class="featured-carousel-wrap">
+        <button id="highlights-prev" class="featured-nav-btn" type="button" aria-label="Anterior">❮</button>
+        <div id="highlights-carousel" class="featured-carousel">
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Base Lumiere Skin" />
+            <div><h3>Base Lumiere Skin</h3><p>R$ 74,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Batom Rose Velvet" />
+            <div><h3>Batom Rose Velvet</h3><p>R$ 49,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2693644/pexels-photo-2693644.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Paleta Midnight Shine" />
+            <div><h3>Paleta Midnight Shine</h3><p>R$ 92,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Serum Glow Repair" />
+            <div><h3>Serum Glow Repair</h3><p>R$ 64,90</p></div>
+          </article>
+          <article class="featured-item">
+            <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Kit Elegance Premium" />
+            <div><h3>Kit Elegance Premium</h3><p>R$ 179,90</p></div>
+          </article>
+        </div>
+        <button id="highlights-next" class="featured-nav-btn" type="button" aria-label="Proximo">❯</button>
+      </div>
+    </section>
+
+    <section class="container section" id="depoimentos">
+      <div class="section-head">
+        <h2>Depoimentos</h2>
+      </div>
+      <div class="testimonial-grid">
+        <blockquote>"A loja esta linda e o atendimento no WhatsApp foi muito rapido."</blockquote>
+        <blockquote>"Produtos de qualidade e embalagens impecaveis. Super feminina."</blockquote>
+        <blockquote>"Parece loja de marca grande, tudo bem organizado e facil de comprar."</blockquote>
+      </div>
+    </section>
+  </main>
+
+  <aside id="cart-drawer" class="cart-drawer">
+    <div class="cart-head">
+      <h3><i class="bi bi-bag"></i> Seu carrinho</h3>
+      <button id="close-cart" type="button">x</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <p class="cart-empty">Seu carrinho esta vazio.</p>
+    </div>
+    <div class="cart-footer">
+      <p>Subtotal: <strong id="cart-subtotal">R$ 0,00</strong></p>
+      <p>Total: <strong id="cart-total">R$ 0,00</strong></p>
+      <a id="checkout-whatsapp" class="button button-checkout" target="_blank" href="#">
+        <i class="bi bi-whatsapp"></i> Finalizar pedido no WhatsApp
+      </a>
+    </div>
+  </aside>
+
+  <div id="cart-overlay" class="overlay"></div>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <div>
+        <h4>Lumiere Beauty</h4>
+        <p>Maquiagem feminina premium com curadoria de alto padrao.</p>
+      </div>
+      <div>
+        <h4>Atendimento</h4>
+        <p>Segunda a sexta, 08h as 18h</p>
+        <p>(11) 99999-9999</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="src/main.js"></script>
+</body>
+</html>

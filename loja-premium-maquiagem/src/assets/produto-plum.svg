@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eadff2"/>
+      <stop offset="100%" stop-color="#d3bddf"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="680" cy="100" r="95" fill="#fff" opacity="0.3"/>
+  <circle cx="160" cy="470" r="130" fill="#fff" opacity="0.2"/>
+  <rect x="150" y="155" width="500" height="290" rx="30" fill="#fff" opacity="0.9"/>
+  <rect x="210" y="220" width="380" height="22" rx="11" fill="#7c5a97"/>
+  <rect x="210" y="260" width="250" height="15" rx="7.5" fill="#a98cc0"/>
+  <text x="210" y="334" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#4f2f68">Lumiere Beauty</text>
+  <text x="210" y="370" font-family="Arial, sans-serif" font-size="24" fill="#6c4d86">Produtos de maquiagem</text>
+</svg>

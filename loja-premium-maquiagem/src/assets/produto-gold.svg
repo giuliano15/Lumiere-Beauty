@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef0df"/>
+      <stop offset="100%" stop-color="#f7d9b2"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <circle cx="120" cy="120" r="85" fill="#fffdf7" opacity="0.6"/>
+  <circle cx="700" cy="500" r="110" fill="#fffdf7" opacity="0.45"/>
+  <rect x="140" y="140" width="520" height="320" rx="30" fill="#fff" opacity="0.9"/>
+  <rect x="200" y="205" width="400" height="22" rx="11" fill="#bb8a58"/>
+  <rect x="200" y="246" width="300" height="15" rx="7.5" fill="#deb384"/>
+  <text x="200" y="318" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#624128">Lumiere Beauty</text>
+  <text x="200" y="355" font-family="Arial, sans-serif" font-size="24" fill="#88603e">Colecao em destaque</text>
+</svg>

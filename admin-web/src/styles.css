@@ -1,0 +1,67 @@
+:root {
+  font-family: Inter, Arial, sans-serif;
+  color: #2e1d25;
+  background: #f7f3f5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+
+.layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+.sidebar { background: #2b1a23; color: #fbeef3; padding: 1rem; }
+.sidebar h2 { margin-top: 0; }
+.menu-btn {
+  width: 100%; text-align: left; margin-bottom: 0.4rem; padding: 0.7rem 0.8rem;
+  border: 1px solid #4f3340; background: #3a2431; color: #fbeef3; border-radius: 10px; cursor: pointer;
+}
+.menu-btn.active { background: #c70097; border-color: #c70097; }
+
+.content { padding: 1rem; }
+.topbar {
+  background: #fff; border: 1px solid #ead7df; border-radius: 12px; padding: 0.9rem 1rem;
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;
+}
+.topbar p { margin: 0; color: #7a5e6d; }
+
+.card { background: #fff; border: 1px solid #ead7df; border-radius: 12px; padding: 1rem; }
+.auth-wrap { min-height: 100vh; display: grid; place-items: center; }
+.auth-card { width: min(420px, 92vw); }
+
+label { display: grid; gap: 0.3rem; margin-bottom: 0.75rem; }
+input {
+  border: 1px solid #d9bbc9; border-radius: 10px; padding: 0.65rem 0.75rem; outline: none;
+}
+select,
+textarea {
+  border: 1px solid #d9bbc9; border-radius: 10px; padding: 0.65rem 0.75rem; outline: none;
+  font-family: inherit;
+}
+input:focus { border-color: #c70097; }
+select:focus,
+textarea:focus { border-color: #c70097; }
+small { color: #7f6472; font-size: 0.8rem; }
+
+.btn {
+  border: 1px solid #d9bbc9; background: #fff; color: #6e4255;
+  border-radius: 10px; padding: 0.58rem 0.85rem; cursor: pointer;
+}
+.btn.primary { background: #c70097; color: #fff; border-color: #c70097; }
+.btn.danger { color: #a81949; border-color: #df98b2; background: #fff5f8; }
+.error-text { color: #b6204f; margin-top: 0; }
+
+.page-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-grid { display: grid; gap: 0.4rem; }
+.check-row { display: flex; align-items: center; gap: 0.5rem; }
+.actions-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.list-wrap { display: grid; gap: 0.6rem; }
+.list-item {
+  border: 1px solid #efdce4; border-radius: 10px; padding: 0.7rem;
+  display: flex; justify-content: space-between; align-items: center; gap: 0.7rem;
+}
+.list-item p { margin: 0.2rem 0 0; color: #7d5f6d; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .page-grid { grid-template-columns: 1fr; }
+}

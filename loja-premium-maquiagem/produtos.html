@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Catalogo completo de produtos de maquiagem da Lumiere Beauty." />
+  <title>Todos os Produtos | Lumiere Beauty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <div class="top-bar">
+    <p>Catalogo completo | Encontre todos os produtos por categoria</p>
+  </div>
+
+  <header class="header-wrap">
+    <div class="header container">
+      <a href="index.html" class="logo">Lumiere Beauty</a>
+      <div class="header-tools">
+        <label class="search-box" for="search-products">
+          <input id="search-products" type="search" placeholder="Buscar produto..." />
+        </label>
+        <button id="open-cart" class="button button-dark" type="button">
+          <i class="bi bi-bag"></i> Carrinho <span id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container section">
+    <div class="section-head section-head-row">
+      <div>
+        <h1>Todos os produtos</h1>
+        <p>Explore o catalogo completo, filtre por categoria e adicione ao carrinho.</p>
+      </div>
+      <a class="button button-secondary" href="index.html">Voltar para Home</a>
+    </div>
+
+    <section class="section" id="categorias">
+      <div class="category-chips">
+        <button class="chip active" data-category="todos" type="button">Todos</button>
+        <button class="chip" data-category="pele" type="button">Pele</button>
+        <button class="chip" data-category="olhos" type="button">Olhos</button>
+        <button class="chip" data-category="labios" type="button">Labios</button>
+        <button class="chip" data-category="skincare" type="button">Skincare</button>
+        <button class="chip" data-category="kits" type="button">Kits</button>
+      </div>
+    </section>
+
+    <section class="section" id="produtos">
+      <div id="products-grid" class="products-grid">
+        <article class="product-card" data-category="pele" data-product="Base Velvet Glow" data-price="69.90" data-image="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=600">
+          <a class="product-link" href="produto.html?produto=Base%20Velvet%20Glow&preco=69.90&categoria=pele&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2533266%2Fpexels-photo-2533266.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+            <img class="product-media" src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Base Velvet Glow" />
+          </a>
+          <p class="product-category">Pele</p>
+          <h3><a class="product-link-text" href="produto.html?produto=Base%20Velvet%20Glow&preco=69.90&categoria=pele&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2533266%2Fpexels-photo-2533266.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">Base Velvet Glow</a></h3>
+          <p class="product-price">R$ 69,90</p>
+          <div class="quantity-box">
+            <button class="qty-btn minus" type="button">-</button>
+            <input class="qty-input" type="number" min="1" value="1" />
+            <button class="qty-btn plus" type="button">+</button>
+          </div>
+          <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+        </article>
+
+        <article class="product-card" data-category="labios" data-product="Batom Satin Rose" data-price="44.90" data-image="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=600">
+          <a class="product-link" href="produto.html?produto=Batom%20Satin%20Rose&preco=44.90&categoria=labios&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2113855%2Fpexels-photo-2113855.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+            <img class="product-media" src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Batom Satin Rose" />
+          </a>
+          <p class="product-category">Labios</p>
+          <h3><a class="product-link-text" href="produto.html?produto=Batom%20Satin%20Rose&preco=44.90&categoria=labios&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2113855%2Fpexels-photo-2113855.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">Batom Satin Rose</a></h3>
+          <p class="product-price">R$ 44,90</p>
+          <div class="quantity-box">
+            <button class="qty-btn minus" type="button">-</button>
+            <input class="qty-input" type="number" min="1" value="1" />
+            <button class="qty-btn plus" type="button">+</button>
+          </div>
+          <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+        </article>
+
+        <article class="product-card" data-category="olhos" data-product="Paleta Aurora 12 Cores" data-price="89.90" data-image="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=600">
+          <a class="product-link" href="produto.html?produto=Paleta%20Aurora%2012%20Cores&preco=89.90&categoria=olhos&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F3373747%2Fpexels-photo-3373747.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+            <img class="product-media" src="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Paleta Aurora 12 Cores" />
+          </a>
+          <p class="product-category">Olhos</p>
+          <h3><a class="product-link-text" href="produto.html?produto=Paleta%20Aurora%2012%20Cores&preco=89.90&categoria=olhos&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F3373747%2Fpexels-photo-3373747.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">Paleta Aurora 12 Cores</a></h3>
+          <p class="product-price">R$ 89,90</p>
+          <div class="quantity-box">
+            <button class="qty-btn minus" type="button">-</button>
+            <input class="qty-input" type="number" min="1" value="1" />
+            <button class="qty-btn plus" type="button">+</button>
+          </div>
+          <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+        </article>
+
+        <article class="product-card" data-category="skincare" data-product="Serum Glow Skin" data-price="58.90" data-image="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=600">
+          <a class="product-link" href="produto.html?produto=Serum%20Glow%20Skin&preco=58.90&categoria=skincare&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2688999%2Fpexels-photo-2688999.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+            <img class="product-media" src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Serum Glow Skin" />
+          </a>
+          <p class="product-category">Skincare</p>
+          <h3><a class="product-link-text" href="produto.html?produto=Serum%20Glow%20Skin&preco=58.90&categoria=skincare&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2688999%2Fpexels-photo-2688999.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">Serum Glow Skin</a></h3>
+          <p class="product-price">R$ 58,90</p>
+          <div class="quantity-box">
+            <button class="qty-btn minus" type="button">-</button>
+            <input class="qty-input" type="number" min="1" value="1" />
+            <button class="qty-btn plus" type="button">+</button>
+          </div>
+          <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+        </article>
+
+        <article class="product-card" data-category="kits" data-product="Kit Essencial Femme" data-price="149.90" data-image="https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=600">
+          <a class="product-link" href="produto.html?produto=Kit%20Essencial%20Femme&preco=149.90&categoria=kits&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F3662667%2Fpexels-photo-3662667.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+            <img class="product-media" src="https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Kit Essencial Femme" />
+          </a>
+          <p class="product-category">Kits</p>
+          <h3><a class="product-link-text" href="produto.html?produto=Kit%20Essencial%20Femme&preco=149.90&categoria=kits&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F3662667%2Fpexels-photo-3662667.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">Kit Essencial Femme</a></h3>
+          <p class="product-price">R$ 149,90</p>
+          <div class="quantity-box">
+            <button class="qty-btn minus" type="button">-</button>
+            <input class="qty-input" type="number" min="1" value="1" />
+            <button class="qty-btn plus" type="button">+</button>
+          </div>
+          <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+        </article>
+
+        <article class="product-card" data-category="olhos" data-product="Mascara Ultra Lash" data-price="39.90" data-image="https://images.pexels.com/photos/2697786/pexels-photo-2697786.jpeg?auto=compress&cs=tinysrgb&w=600">
+          <a class="product-link" href="produto.html?produto=Mascara%20Ultra%20Lash&preco=39.90&categoria=olhos&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2697786%2Fpexels-photo-2697786.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+            <img class="product-media" src="https://images.pexels.com/photos/2697786/pexels-photo-2697786.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Mascara Ultra Lash" />
+          </a>
+          <p class="product-category">Olhos</p>
+          <h3><a class="product-link-text" href="produto.html?produto=Mascara%20Ultra%20Lash&preco=39.90&categoria=olhos&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2697786%2Fpexels-photo-2697786.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">Mascara Ultra Lash</a></h3>
+          <p class="product-price">R$ 39,90</p>
+          <div class="quantity-box">
+            <button class="qty-btn minus" type="button">-</button>
+            <input class="qty-input" type="number" min="1" value="1" />
+            <button class="qty-btn plus" type="button">+</button>
+          </div>
+          <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <aside id="cart-drawer" class="cart-drawer">
+    <div class="cart-head">
+      <h3><i class="bi bi-bag"></i> Seu carrinho</h3>
+      <button id="close-cart" type="button">x</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <p class="cart-empty">Seu carrinho esta vazio.</p>
+    </div>
+    <div class="cart-footer">
+      <p>Subtotal: <strong id="cart-subtotal">R$ 0,00</strong></p>
+      <p>Total: <strong id="cart-total">R$ 0,00</strong></p>
+      <a id="checkout-whatsapp" class="button button-checkout" target="_blank" href="#">
+        <i class="bi bi-whatsapp"></i> Finalizar pedido no WhatsApp
+      </a>
+    </div>
+  </aside>
+  <div id="cart-overlay" class="overlay"></div>
+
+  <script src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalhes do Produto | Lumiere Beauty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+  <link rel="stylesheet" href="src/styles.css" />
+</head>
+<body>
+  <header class="header-wrap">
+    <div class="header container">
+      <a href="index.html" class="logo">Lumiere Beauty</a>
+      <div class="detail-header-actions">
+        <a class="button button-buy" href="index.html">Voltar para loja</a>
+        <button id="open-favorites" class="button button-secondary icon-header-btn" type="button" aria-label="Favoritos">
+          <i class="bi bi-heart"></i> <span id="favorite-count">0</span>
+        </button>
+        <button id="open-cart" class="button button-dark icon-header-btn" type="button" aria-label="Carrinho">
+          <i class="bi bi-bag"></i> <span id="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="top-bar">
+    <p>Detalhes completos do produto | Compra rapida e finalizacao no WhatsApp</p>
+  </section>
+
+  <main class="container section product-detail-page">
+    <div class="product-detail-gallery">
+      <div class="detail-main-image-wrap">
+        <img id="detail-main-image" class="detail-main-image" src="" alt="Produto selecionado" />
+      </div>
+      <div class="detail-thumbs">
+        <button class="detail-thumb active" type="button"><img id="thumb-1" src="" alt="Miniatura 1" /></button>
+        <button class="detail-thumb" type="button"><img id="thumb-2" src="" alt="Miniatura 2" /></button>
+        <button class="detail-thumb" type="button"><img id="thumb-3" src="" alt="Miniatura 3" /></button>
+      </div>
+    </div>
+
+    <aside class="product-detail-info">
+      <p class="eyebrow">Destaque</p>
+      <h1 id="detail-product-name">Produto</h1>
+      <div class="detail-rating">★★★★★</div>
+      <p class="detail-price" id="detail-product-price">R$ 0,00</p>
+      <p class="detail-meta"><strong>REF:</strong> 13380 &nbsp; <strong>Marca:</strong> Lumiere Beauty</p>
+
+      <p class="detail-description">
+        Produto com acabamento premium, alta procura e excelente exposicao para vitrine.
+      </p>
+
+      <div class="detail-quantity-row">
+        <span>Quantidade:</span>
+        <div class="quantity-box">
+          <button id="detail-minus" class="qty-btn" type="button">-</button>
+          <input id="detail-qty" class="qty-input" type="number" min="1" value="1" />
+          <button id="detail-plus" class="qty-btn" type="button">+</button>
+        </div>
+      </div>
+
+      <div class="detail-cta-group">
+        <button id="detail-add-cart" class="button button-buy" type="button">Adicionar ao carrinho</button>
+        <button id="detail-favorite" class="button button-secondary" type="button">Adicionar aos favoritos</button>
+        <a id="detail-whatsapp" class="button button-checkout" target="_blank" href="#">Atendimento no WhatsApp</a>
+      </div>
+
+      <div class="detail-benefits">
+        <p><strong>Pix:</strong> ate 15% OFF</p>
+        <p><strong>Entrega:</strong> todo Brasil</p>
+        <p><strong>Suporte:</strong> atendimento humanizado</p>
+      </div>
+    </aside>
+  </main>
+
+  <section class="container section">
+    <article class="detail-description-card">
+      <h3>Descricao Geral</h3>
+      <p id="detail-general-description">
+        Produto premium de maquiagem com alta saida para revenda e excelente apresentacao em vitrine.
+      </p>
+    </article>
+  </section>
+
+  <section class="container section">
+    <div class="section-head">
+      <h2>Produtos relacionados</h2>
+      <p>Itens que combinam com este produto e aumentam o ticket medio.</p>
+    </div>
+    <div class="related-grid">
+      <article class="related-card">
+        <a href="produto.html?produto=Gloss%20Shine%20Rose&preco=39.90&categoria=labios&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2113855%2Fpexels-photo-2113855.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+          <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Gloss Shine Rose" />
+          <h4>Gloss Shine Rose</h4>
+          <p>R$ 39,90</p>
+        </a>
+      </article>
+      <article class="related-card">
+        <a href="produto.html?produto=Paleta%20Nude%20Glow&preco=84.90&categoria=olhos&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F3373747%2Fpexels-photo-3373747.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+          <img src="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Paleta Nude Glow" />
+          <h4>Paleta Nude Glow</h4>
+          <p>R$ 84,90</p>
+        </a>
+      </article>
+      <article class="related-card">
+        <a href="produto.html?produto=Kit%20Pinceis%20Pro%206&preco=49.90&categoria=acessorios&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2688999%2Fpexels-photo-2688999.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+          <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Kit Pinceis Pro 6" />
+          <h4>Kit Pinceis Pro 6</h4>
+          <p>R$ 49,90</p>
+        </a>
+      </article>
+      <article class="related-card">
+        <a href="produto.html?produto=Base%20Soft%20Cover&preco=62.90&categoria=pele&imagem=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F2533266%2Fpexels-photo-2533266.jpeg%3Fauto%3Dcompress%26cs%3Dtinysrgb%26w%3D1200">
+          <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=700" alt="Base Soft Cover" />
+          <h4>Base Soft Cover</h4>
+          <p>R$ 62,90</p>
+        </a>
+      </article>
+    </div>
+  </section>
+
+  <aside id="cart-drawer" class="cart-drawer">
+    <div class="cart-head">
+      <h3><i class="bi bi-bag"></i> Seu carrinho</h3>
+      <button id="close-cart" type="button">x</button>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <p class="cart-empty">Seu carrinho esta vazio.</p>
+    </div>
+    <div class="cart-footer">
+      <p>Subtotal: <strong id="cart-subtotal">R$ 0,00</strong></p>
+      <p>Total: <strong id="cart-total">R$ 0,00</strong></p>
+      <a id="checkout-whatsapp" class="button button-checkout" target="_blank" href="#">
+        <i class="bi bi-whatsapp"></i> Finalizar pedido no WhatsApp
+      </a>
+    </div>
+  </aside>
+  <div id="cart-overlay" class="overlay"></div>
+
+  <aside id="favorites-drawer" class="favorites-drawer">
+    <div class="cart-head">
+      <h3><i class="bi bi-heart"></i> Seus favoritos</h3>
+      <button id="close-favorites" type="button">x</button>
+    </div>
+    <div id="favorites-items" class="cart-items">
+      <p class="cart-empty">Nenhum favorito ainda.</p>
+    </div>
+  </aside>
+  <div id="favorites-overlay" class="overlay"></div>
+
+  <script src="src/main.js"></script>
+</body>
+</html>
