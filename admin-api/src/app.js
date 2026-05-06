@@ -15,6 +15,10 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: "5mb" }));
 
+app.get("/", (_req, res) => {
+  res.json({ status: "ok", service: "lumiere-api" });
+});
+
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
