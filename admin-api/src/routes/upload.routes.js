@@ -1,6 +1,5 @@
 import { Router } from "express";
 import multer from "multer";
-import sharp from "sharp";
 import { cloudinary } from "../lib/cloudinary.js";
 
 const router = Router();
@@ -31,6 +30,7 @@ router.post("/", upload.array("files", 8), async (req, res) => {
     return res.status(400).json({ message: "Nenhum arquivo enviado." });
   }
 
+  const sharp = (await import("sharp")).default;
   const urls = [];
 
   for (const file of req.files) {
