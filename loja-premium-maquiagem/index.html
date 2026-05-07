@@ -43,6 +43,9 @@
         <label class="search-box" for="search-products">
           <input id="search-products" type="search" placeholder="Buscar produto..." />
         </label>
+        <button id="open-favorites" class="button button-secondary icon-header-btn" type="button" aria-label="Favoritos">
+          <i class="bi bi-heart"></i> <span id="favorite-count">0</span>
+        </button>
         <button id="open-cart" class="button button-dark" type="button">
           <i class="bi bi-bag"></i> Carrinho <span id="cart-count">0</span>
         </button>
@@ -185,23 +188,23 @@
         <div id="launch-carousel" class="featured-carousel">
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Base Velvet Glow" />
-            <div><h3>Base Velvet Glow</h3><p>R$ 69,90</p></div>
+            <div><h3>Base Velvet Glow</h3><p class="featured-price">R$ 69,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Batom Satin Rose" />
-            <div><h3>Batom Satin Rose</h3><p>R$ 44,90</p></div>
+            <div><h3>Batom Satin Rose</h3><p class="featured-price">R$ 44,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/3373747/pexels-photo-3373747.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Paleta Aurora 12 Cores" />
-            <div><h3>Paleta Aurora 12 Cores</h3><p>R$ 89,90</p></div>
+            <div><h3>Paleta Aurora 12 Cores</h3><p class="featured-price">R$ 89,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Serum Glow Skin" />
-            <div><h3>Serum Glow Skin</h3><p>R$ 58,90</p></div>
+            <div><h3>Serum Glow Skin</h3><p class="featured-price">R$ 58,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/3662667/pexels-photo-3662667.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Kit Essencial Femme" />
-            <div><h3>Kit Essencial Femme</h3><p>R$ 149,90</p></div>
+            <div><h3>Kit Essencial Femme</h3><p class="featured-price">R$ 149,90</p></div>
           </article>
         </div>
         <button id="launch-next" class="featured-nav-btn" type="button" aria-label="Proximo">❯</button>
@@ -218,23 +221,23 @@
         <div id="highlights-carousel" class="featured-carousel">
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/3373736/pexels-photo-3373736.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Base Lumiere Skin" />
-            <div><h3>Base Lumiere Skin</h3><p>R$ 74,90</p></div>
+            <div><h3>Base Lumiere Skin</h3><p class="featured-price">R$ 74,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Batom Rose Velvet" />
-            <div><h3>Batom Rose Velvet</h3><p>R$ 49,90</p></div>
+            <div><h3>Batom Rose Velvet</h3><p class="featured-price">R$ 49,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2693644/pexels-photo-2693644.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Paleta Midnight Shine" />
-            <div><h3>Paleta Midnight Shine</h3><p>R$ 92,90</p></div>
+            <div><h3>Paleta Midnight Shine</h3><p class="featured-price">R$ 92,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2688999/pexels-photo-2688999.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Serum Glow Repair" />
-            <div><h3>Serum Glow Repair</h3><p>R$ 64,90</p></div>
+            <div><h3>Serum Glow Repair</h3><p class="featured-price">R$ 64,90</p></div>
           </article>
           <article class="featured-item">
             <img src="https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1000" alt="Kit Elegance Premium" />
-            <div><h3>Kit Elegance Premium</h3><p>R$ 179,90</p></div>
+            <div><h3>Kit Elegance Premium</h3><p class="featured-price">R$ 179,90</p></div>
           </article>
         </div>
         <button id="highlights-next" class="featured-nav-btn" type="button" aria-label="Proximo">❯</button>
@@ -271,6 +274,17 @@
   </aside>
 
   <div id="cart-overlay" class="overlay"></div>
+
+  <aside id="favorites-drawer" class="favorites-drawer">
+    <div class="cart-head">
+      <h3><i class="bi bi-heart"></i> Seus favoritos</h3>
+      <button id="close-favorites" type="button">x</button>
+    </div>
+    <div id="favorites-items" class="cart-items">
+      <p class="cart-empty">Nenhum favorito ainda.</p>
+    </div>
+  </aside>
+  <div id="favorites-overlay" class="overlay"></div>
 
   <footer class="footer">
     <div class="container footer-content">

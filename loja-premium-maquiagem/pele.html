@@ -12,7 +12,7 @@
 </head>
 <body>
   <div class="top-bar"><p>Categoria: Pele</p></div>
-  <header class="header-wrap"><div class="header container"><a href="index.html" class="logo">Lumiere Beauty</a><nav class="nav"><a href="produtos.html">Todos</a><a href="pele.html">Pele</a><a href="olhos.html">Olhos</a><a href="labios.html">Labios</a><a href="skincare.html">Skincare</a><a href="kits.html">Kits</a></nav><button id="open-cart" class="button button-dark" type="button"><i class="bi bi-bag"></i> Carrinho <span id="cart-count">0</span></button></div></header>
+  <header class="header-wrap"><div class="header container"><a href="index.html" class="logo">Lumiere Beauty</a><nav class="nav"><a href="produtos.html">Todos</a><a href="pele.html">Pele</a><a href="olhos.html">Olhos</a><a href="labios.html">Labios</a><a href="skincare.html">Skincare</a><a href="kits.html">Kits</a></nav><button id="open-favorites" class="button button-secondary icon-header-btn" type="button" aria-label="Favoritos"><i class="bi bi-heart"></i> <span id="favorite-count">0</span></button><button id="open-cart" class="button button-dark" type="button"><i class="bi bi-bag"></i> Carrinho <span id="cart-count">0</span></button></div></header>
   <main class="container section">
     <div class="section-head"><h1>Pele</h1><p>Produtos da categoria pele.</p></div>
     <div id="products-grid" class="products-grid">
@@ -26,6 +26,8 @@
   </main>
   <aside id="cart-drawer" class="cart-drawer"><div class="cart-head"><h3><i class="bi bi-bag"></i> Seu carrinho</h3><button id="close-cart" type="button">x</button></div><div id="cart-items" class="cart-items"><p class="cart-empty">Seu carrinho esta vazio.</p></div><div class="cart-footer"><p>Subtotal: <strong id="cart-subtotal">R$ 0,00</strong></p><p>Total: <strong id="cart-total">R$ 0,00</strong></p><a id="checkout-whatsapp" class="button button-checkout" target="_blank" href="#"><i class="bi bi-whatsapp"></i> Finalizar pedido no WhatsApp</a></div></aside>
   <div id="cart-overlay" class="overlay"></div>
+  <aside id="favorites-drawer" class="favorites-drawer"><div class="cart-head"><h3><i class="bi bi-heart"></i> Seus favoritos</h3><button id="close-favorites" type="button">x</button></div><div id="favorites-items" class="cart-items"><p class="cart-empty">Nenhum favorito ainda.</p></div></aside>
+  <div id="favorites-overlay" class="overlay"></div>
   <script src="src/main.js"></script>
 </body>
 </html>

@@ -283,6 +283,7 @@ async function hydrateProductsFromApi() {
       grid.innerHTML = products.map(buildProductCard).join("");
       setupQuantityControls();
       setupCartActions();
+      setupProductCardNavigation();
       setupFilters();
       activateCategory(selectedCategory);
     } catch (_error) {
@@ -306,13 +307,35 @@ function setupQuantityControls() {
     const input = card.querySelector(".qty-input");
     if (!minus || !plus || !input) return;
 
-    minus.addEventListener("click", () => {
+    minus.addEventListener("click", (event) => {
+      event.stopPropagation();
       const next = Math.max(1, Number(input.value) - 1);
       input.value = String(next);
     });
 
-    plus.addEventListener("click", () => {
+    plus.addEventListener("click", (event) => {
+      event.stopPropagation();
       input.value = String(Number(input.value) + 1);
+    });
+  });
+}
+
+function setupProductCardNavigation() {
+  const cards = Array.from(document.querySelectorAll(".product-card"));
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    const product = card.dataset.product;
+    if (!product) return;
+    const price = Number(card.dataset.price || 0);
+    const category = card.dataset.category || "maquiagem";
+    const image = card.dataset.image || "";
+    const detailHref = `produto.html?produto=${encodeURIComponent(product)}&preco=${price}&categoria=${encodeURIComponent(category)}&imagem=${encodeURIComponent(image)}`;
+
+    card.addEventListener("click", (event) => {
+      const interactive = event.target.closest("a, button, input, textarea, select, label");
+      if (interactive) return;
+      window.location.href = detailHref;
     });
   });
 }
@@ -444,7 +467,8 @@ function setupCartActions() {
   if (!addButtons.length) return;
 
   addButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
       const card = button.closest(".product-card");
       if (!card) return;
       const name = card.dataset.product;
@@ -706,6 +730,7 @@ async function initPage() {
   setupSearch();
   setupQuantityControls();
   setupCartActions();
+  setupProductCardNavigation();
   setupCartDrawer();
   setupFavoritesDrawer();
   setupMobileMenu();
