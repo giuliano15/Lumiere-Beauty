@@ -14,20 +14,16 @@ function getStoredUser() {
   }
 }
 
+const NAV_MENU = [
+  { id: "products",  label: "Produtos",       icon: "🛍️", section: "Catálogo" },
+  { id: "categories",label: "Categorias",     icon: "🏷️", section: "Catálogo" },
+  { id: "sections",  label: "Home Sections",  icon: "🏠", section: "Vitrine" },
+  { id: "settings",  label: "Configurações",  icon: "⚙️", section: "Sistema" },
+];
+
 export function App() {
   const [user, setUser] = useState(getStoredUser());
-  const [currentTab, setCurrentTab] = useState("categories");
-
-  const menu = useMemo(
-    () => [
-      { id: "dashboard", label: "Dashboard" },
-      { id: "categories", label: "Categorias" },
-      { id: "products", label: "Produtos (proxima etapa)" },
-      { id: "sections", label: "Home Sections (proxima etapa)" },
-      { id: "settings", label: "Configuracoes (proxima etapa)" },
-    ],
-    [],
-  );
+  const [currentTab, setCurrentTab] = useState("products");
 
   if (!user) return <LoginPage onSuccess={setUser} />;
 
@@ -37,37 +33,69 @@ export function App() {
     setUser(null);
   }
 
+  // Group menu items by section
+  const sections = useMemo(() => {
+    const map = new Map();
+    NAV_MENU.forEach((item) => {
+      if (!map.has(item.section)) map.set(item.section, []);
+      map.get(item.section).push(item);
+    });
+    return map;
+  }, []);
+
   return (
     <div className="layout">
+      {/* ── Sidebar ── */}
       <aside className="sidebar">
-        <h2>Lumiere Admin</h2>
-        <nav>
-          {menu.map((item) => (
-            <button
-              key={item.id}
-              className={`menu-btn ${currentTab === item.id ? "active" : ""}`}
-              onClick={() => setCurrentTab(item.id)}
-            >
-              {item.label}
-            </button>
+        <div className="sidebar-header">
+          <div className="sidebar-logo-icon">💄</div>
+          <div>
+            <div className="sidebar-logo-text">Lumiere Admin</div>
+            <div className="sidebar-logo-sub">Painel Administrativo</div>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav">
+          {Array.from(sections.entries()).map(([sectionLabel, items]) => (
+            <div key={sectionLabel}>
+              <div className="nav-section-label">{sectionLabel}</div>
+              {items.map((item) => (
+                <button
+                  key={item.id}
+                  className={`menu-btn ${currentTab === item.id ? "active" : ""}`}
+                  onClick={() => setCurrentTab(item.id)}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  {item.label}
+                </button>
+              ))}
+            </div>
           ))}
         </nav>
+
+        <div className="sidebar-footer">
+          <button className="btn ghost sm full" onClick={logout}>
+            🚪 Sair
+          </button>
+        </div>
       </aside>
 
+      {/* ── Main ── */}
       <main className="content">
         <header className="topbar">
           <div>
             <strong>{user.name}</strong>
             <p>{user.email}</p>
           </div>
-          <button className="btn" onClick={logout}>Sair</button>
+          <button className="btn ghost sm" onClick={logout}>Sair</button>
         </header>
 
-        {currentTab === "dashboard" ? <section className="card"><h2>Dashboard</h2><p>Painel pronto. Proximo passo: produtos.</p></section> : null}
-        {currentTab === "categories" ? <CategoriesPage /> : null}
-      {currentTab === "products" ? <ProductsPage /> : null}
-      {currentTab === "sections" ? <HomeSectionsPage /> : null}
-      {currentTab === "settings" ? <SettingsPage /> : null}
+        <div className="page-content">
+          {currentTab === "products"   ? <ProductsPage />     : null}
+          {currentTab === "categories" ? <CategoriesPage />   : null}
+          {currentTab === "sections"   ? <HomeSectionsPage /> : null}
+          {currentTab === "settings"   ? <SettingsPage />     : null}
+        </div>
       </main>
     </div>
   );

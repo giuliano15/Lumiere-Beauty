@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch, uploadFiles } from "../lib/api";
 
-const initialForm = {
+const EMPTY_FORM = {
   name: "",
   slug: "",
   sku: "",
@@ -17,49 +17,83 @@ const initialForm = {
   imagesText: "",
 };
 
+function slugify(text) {
+  return String(text)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 function buildImages(imagesText) {
   return imagesText
     .split("\n")
-    .map((line) => line.trim())
+    .map((l) => l.trim())
     .filter(Boolean)
-    .map((url, index) => ({
-      url,
-      alt: `Imagem ${index + 1}`,
-      sortOrder: index,
-      isPrimary: index === 0,
-    }));
+    .map((url, i) => ({ url, alt: `Imagem ${i + 1}`, sortOrder: i, isPrimary: i === 0 }));
+}
+
+function formatBRL(value) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value) || 0);
+}
+
+function Toast({ message, type }) {
+  if (!message) return null;
+  return (
+    <div
+      id="adm-toast"
+      className={`show ${type === "error" ? "error" : ""}`}
+      style={{ position: "fixed", bottom: "2rem", right: "2rem", zIndex: 999 }}
+    >
+      {type === "error" ? "⚠️" : "✅"} {message}
+    </div>
+  );
 }
 
 export function ProductsPage() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [form, setForm] = useState(initialForm);
-  const [editingId, setEditingId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState("");
+  const [products, setProducts]       = useState([]);
+  const [categories, setCategories]   = useState([]);
+  const [search, setSearch]           = useState("");
+  const [catFilter, setCatFilter]     = useState("");
+  const [form, setForm]               = useState(EMPTY_FORM);
+  const [editingId, setEditingId]     = useState("");
+  const [loading, setLoading]         = useState(false);
+  const [uploading, setUploading]     = useState(false);
+  const [modalOpen, setModalOpen]     = useState(false);
+  const [error, setError]             = useState("");
+  const [toast, setToast]             = useState({ message: "", type: "success" });
+  const [previewUrl, setPreviewUrl]   = useState("");
+  const fileInputRef                  = useRef(null);
 
   const categoryMap = useMemo(() => {
     const map = new Map();
-    categories.forEach((category) => map.set(category.id, category.name));
+    categories.forEach((c) => map.set(c.id, c));
     return map;
   }, [categories]);
 
+  function showToast(message, type = "success") {
+    setToast({ message, type });
+    setTimeout(() => setToast({ message: "", type: "success" }), 3500);
+  }
+
   async function loadCategories() {
-    const data = await apiFetch("/admin/categories");
-    setCategories(data);
+    try {
+      const data = await apiFetch("/admin/categories");
+      setCategories(data);
+    } catch {
+      // silencioso
+    }
   }
 
   async function loadProducts() {
     setLoading(true);
     setError("");
     try {
-      const query = new URLSearchParams();
-      if (search.trim()) query.set("search", search.trim());
-      if (selectedCategory) query.set("categoryId", selectedCategory);
-      const data = await apiFetch(`/admin/products?${query.toString()}`);
+      const q = new URLSearchParams();
+      if (search.trim()) q.set("search", search.trim());
+      if (catFilter) q.set("categoryId", catFilter);
+      const data = await apiFetch(`/admin/products?${q}`);
       setProducts(data);
     } catch (err) {
       setError(err.message);
@@ -68,84 +102,56 @@ export function ProductsPage() {
     }
   }
 
-  useEffect(() => {
-    loadCategories().catch((err) => setError(err.message));
-  }, []);
+  useEffect(() => { loadCategories(); }, []);
+  useEffect(() => { loadProducts(); }, [search, catFilter]);
 
-  useEffect(() => {
-    loadProducts();
-  }, [search, selectedCategory]);
-
-  async function handleSubmit(event) {
-    event.preventDefault();
+  function openModal(item = null) {
     setError("");
-    try {
-      const payload = {
-        name: form.name,
-        slug: form.slug,
-        sku: form.sku || null,
-        description: form.description || null,
-        shortDesc: form.shortDesc || null,
-        price: Number(form.price),
-        promoPrice: form.promoPrice ? Number(form.promoPrice) : null,
-        stock: Number(form.stock),
-        brand: form.brand || null,
-        categoryId: form.categoryId,
-        isActive: form.isActive,
-        isFeatured: form.isFeatured,
-        images: buildImages(form.imagesText),
-      };
-
-      if (editingId) {
-        await apiFetch(`/admin/products/${editingId}`, {
-          method: "PUT",
-          body: JSON.stringify(payload),
-        });
-      } else {
-        await apiFetch("/admin/products", {
-          method: "POST",
-          body: JSON.stringify(payload),
-        });
-      }
-
-      setForm(initialForm);
+    if (item) {
+      setEditingId(item.id);
+      const firstImg = (item.images || [])[0]?.url || "";
+      setPreviewUrl(firstImg);
+      setForm({
+        name:        item.name        || "",
+        slug:        item.slug        || "",
+        sku:         item.sku         || "",
+        description: item.description || "",
+        shortDesc:   item.shortDesc   || "",
+        price:       item.price       || "",
+        promoPrice:  item.promoPrice  || "",
+        stock:       item.stock       ?? 0,
+        brand:       item.brand       || "",
+        categoryId:  item.categoryId  || "",
+        isActive:    item.isActive    ?? true,
+        isFeatured:  item.isFeatured  ?? false,
+        imagesText:  (item.images || []).map((img) => img.url).join("\n"),
+      });
+    } else {
       setEditingId("");
-      await loadProducts();
-    } catch (err) {
-      setError(err.message);
+      setPreviewUrl("");
+      setForm(EMPTY_FORM);
     }
+    setModalOpen(true);
   }
 
-  function startEdit(item) {
-    setEditingId(item.id);
-    setForm({
-      name: item.name || "",
-      slug: item.slug || "",
-      sku: item.sku || "",
-      description: item.description || "",
-      shortDesc: item.shortDesc || "",
-      price: item.price || "",
-      promoPrice: item.promoPrice || "",
-      stock: item.stock ?? 0,
-      brand: item.brand || "",
-      categoryId: item.categoryId || "",
-      isActive: item.isActive ?? true,
-      isFeatured: item.isFeatured ?? false,
-      imagesText: (item.images || []).map((img) => img.url).join("\n"),
+  function closeModal() {
+    setModalOpen(false);
+    setEditingId("");
+    setPreviewUrl("");
+    setForm(EMPTY_FORM);
+    setError("");
+  }
+
+  function setField(key, value) {
+    setForm((prev) => {
+      const next = { ...prev, [key]: value };
+      // Auto-gera slug pelo nome (somente criação)
+      if (key === "name" && !editingId) next.slug = slugify(value);
+      return next;
     });
   }
 
-  async function removeProduct(id) {
-    if (!window.confirm("Remover produto?")) return;
-    try {
-      await apiFetch(`/admin/products/${id}`, { method: "DELETE" });
-      await loadProducts();
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-  async function handleUploadImages(event) {
+  async function handleUpload(event) {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
     setUploading(true);
@@ -154,85 +160,403 @@ export function ProductsPage() {
       const result = await uploadFiles(files);
       const current = form.imagesText.trim();
       const merged = [...(current ? current.split("\n").filter(Boolean) : []), ...result.urls];
-      setForm((prev) => ({ ...prev, imagesText: merged.join("\n") }));
+      setField("imagesText", merged.join("\n"));
+      if (merged[0]) setPreviewUrl(merged[0]);
+      showToast("Imagens enviadas com sucesso!");
     } catch (err) {
-      setError(err.message);
+      setError(`Erro no upload: ${err.message}`);
+      showToast(`Erro: ${err.message}`, "error");
     } finally {
       setUploading(false);
       event.target.value = "";
     }
   }
 
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError("");
+    if (!form.name.trim()) { setError("Nome é obrigatório."); return; }
+    if (!form.price)       { setError("Preço é obrigatório."); return; }
+    if (!form.categoryId)  { setError("Selecione uma categoria."); return; }
+
+    try {
+      const payload = {
+        name:        form.name.trim(),
+        slug:        form.slug.trim() || slugify(form.name),
+        sku:         form.sku   || null,
+        description: form.description || null,
+        shortDesc:   form.shortDesc   || null,
+        price:       Number(form.price),
+        promoPrice:  form.promoPrice ? Number(form.promoPrice) : null,
+        stock:       Number(form.stock),
+        brand:       form.brand || null,
+        categoryId:  form.categoryId,
+        isActive:    form.isActive,
+        isFeatured:  form.isFeatured,
+        images:      buildImages(form.imagesText),
+      };
+
+      if (editingId) {
+        await apiFetch(`/admin/products/${editingId}`, { method: "PUT", body: JSON.stringify(payload) });
+        showToast("Produto atualizado com sucesso! ✨");
+      } else {
+        await apiFetch("/admin/products", { method: "POST", body: JSON.stringify(payload) });
+        showToast("Produto criado com sucesso! 🎉");
+      }
+
+      closeModal();
+      await loadProducts();
+    } catch (err) {
+      setError(err.message);
+      showToast(err.message, "error");
+    }
+  }
+
+  async function handleDelete(id, name) {
+    if (!window.confirm(`Remover "${name}"? Esta ação não pode ser desfeita.`)) return;
+    try {
+      await apiFetch(`/admin/products/${id}`, { method: "DELETE" });
+      showToast("Produto removido.");
+      await loadProducts();
+    } catch (err) {
+      showToast(err.message, "error");
+    }
+  }
+
+  const firstImgUrl = form.imagesText.split("\n")[0]?.trim() || "";
+
   return (
-    <section className="page-grid">
-      <div className="card">
-        <h2>{editingId ? "Editar produto" : "Novo produto"}</h2>
-        <form className="form-grid" onSubmit={handleSubmit}>
-          <label>Nome<input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} required /></label>
-          <label>Slug<input value={form.slug} onChange={(e) => setForm((p) => ({ ...p, slug: e.target.value }))} required /></label>
-          <label>SKU<input value={form.sku} onChange={(e) => setForm((p) => ({ ...p, sku: e.target.value }))} /></label>
-          <label>Categoria
-            <select value={form.categoryId} onChange={(e) => setForm((p) => ({ ...p, categoryId: e.target.value }))} required>
-              <option value="">Selecione</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
-          </label>
-          <label>Preco<input type="number" step="0.01" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: e.target.value }))} required /></label>
-          <label>Preco promocional<input type="number" step="0.01" value={form.promoPrice} onChange={(e) => setForm((p) => ({ ...p, promoPrice: e.target.value }))} /></label>
-          <label>Estoque<input type="number" value={form.stock} onChange={(e) => setForm((p) => ({ ...p, stock: e.target.value }))} required /></label>
-          <label>Marca<input value={form.brand} onChange={(e) => setForm((p) => ({ ...p, brand: e.target.value }))} /></label>
-          <label>Descricao curta<input value={form.shortDesc} onChange={(e) => setForm((p) => ({ ...p, shortDesc: e.target.value }))} /></label>
-          <label>Descricao completa<textarea rows={4} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} /></label>
-          <label>
-            Upload de imagens (otimizadas automaticamente)
-            <input type="file" accept="image/*" multiple onChange={handleUploadImages} />
-          </label>
-          <label>
-            Imagens (1 URL por linha)
-            <textarea rows={4} value={form.imagesText} onChange={(e) => setForm((p) => ({ ...p, imagesText: e.target.value }))} />
-            <small>{uploading ? "Enviando e comprimindo imagens..." : "As imagens sao convertidas para WebP e redimensionadas no servidor."}</small>
-          </label>
-          <label className="check-row"><input type="checkbox" checked={form.isActive} onChange={(e) => setForm((p) => ({ ...p, isActive: e.target.checked }))} /> Ativo</label>
-          <label className="check-row"><input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm((p) => ({ ...p, isFeatured: e.target.checked }))} /> Destaque</label>
-          <div className="actions-row">
-            <button className="btn primary" type="submit">{editingId ? "Salvar" : "Criar produto"}</button>
-            {editingId ? <button className="btn" type="button" onClick={() => { setEditingId(""); setForm(initialForm); }}>Cancelar</button> : null}
-          </div>
-        </form>
+    <>
+      {/* ── Toast ── */}
+      <Toast message={toast.message} type={toast.type} />
+
+      {/* ── Page header ── */}
+      <div className="page-header">
+        <div>
+          <div className="page-header-title">🛍️ Produtos</div>
+          <div className="page-header-sub">Gerencie o catálogo da sua loja</div>
+        </div>
+        <button className="btn primary" onClick={() => openModal()}>
+          ✨ Novo Produto
+        </button>
       </div>
 
-      <div className="card">
-        <h2>Produtos</h2>
-        <div className="actions-row">
-          <input placeholder="Buscar por nome" value={search} onChange={(e) => setSearch(e.target.value)} />
-          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-            <option value="">Todas categorias</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>{cat.name}</option>
+      {/* ── Filters ── */}
+      <div className="card" style={{ marginBottom: "1rem" }}>
+        <div className="search-row">
+          <input
+            placeholder="🔍  Buscar por nome..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <select value={catFilter} onChange={(e) => setCatFilter(e.target.value)}>
+            <option value="">Todas as categorias</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
         </div>
-        {loading ? <p>Carregando...</p> : null}
-        {error ? <p className="error-text">{error}</p> : null}
-        <div className="list-wrap">
-          {products.map((item) => (
-            <article key={item.id} className="list-item">
-              <div>
-                <strong>{item.name}</strong>
-                <p>
-                  {categoryMap.get(item.categoryId) || "Sem categoria"} | R$ {item.price} | estoque: {item.stock}
-                </p>
+
+        {/* Category filter tabs */}
+        {categories.length > 0 && (
+          <div className="filter-tabs">
+            <button
+              className={`filter-tab ${catFilter === "" ? "active" : ""}`}
+              onClick={() => setCatFilter("")}
+            >
+              Todos
+            </button>
+            {categories.map((c) => (
+              <button
+                key={c.id}
+                className={`filter-tab ${catFilter === c.id ? "active" : ""}`}
+                onClick={() => setCatFilter(c.id)}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Product list ── */}
+      <div className="card">
+        <h2>
+          📦 Produtos cadastrados
+          <span style={{ marginLeft: "auto", fontSize: "0.8rem", fontWeight: 500, color: "var(--adm-muted)", fontFamily: "Inter" }}>
+            {products.length} {products.length === 1 ? "item" : "itens"}
+          </span>
+        </h2>
+
+        {error && <p className="error-text" style={{ marginBottom: "1rem" }}>{error}</p>}
+
+        {loading ? (
+          <div className="empty-state">
+            <span className="empty-icon">⏳</span>
+            Carregando produtos...
+          </div>
+        ) : products.length === 0 ? (
+          <div className="empty-state">
+            <span className="empty-icon">🛍️</span>
+            Nenhum produto encontrado.
+            <br />
+            <button className="btn primary sm" style={{ marginTop: "1rem" }} onClick={() => openModal()}>
+              + Criar primeiro produto
+            </button>
+          </div>
+        ) : (
+          <div className="list-wrap">
+            {products.map((item) => {
+              const img = item.images?.[0]?.url;
+              const cat = categoryMap.get(item.categoryId);
+              return (
+                <div key={item.id} className="list-item">
+                  {img ? (
+                    <img className="list-item-img" src={img} alt={item.name} />
+                  ) : (
+                    <div className="list-item-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}>
+                      🖼️
+                    </div>
+                  )}
+
+                  <div className="list-item-info">
+                    <strong>{item.name}</strong>
+                    <p>
+                      {cat?.name || "Sem categoria"} &nbsp;·&nbsp;
+                      {formatBRL(item.price)}
+                      {item.promoPrice ? <span style={{ color: "var(--adm-accent)", marginLeft: "0.4rem" }}>{formatBRL(item.promoPrice)}</span> : null}
+                      &nbsp;·&nbsp; Estoque: {item.stock}
+                    </p>
+                    <p style={{ marginTop: "0.3rem" }}>
+                      <span className={`badge-status ${item.isActive ? "active" : "inactive"}`}>
+                        {item.isActive ? "✔ Ativo" : "✖ Inativo"}
+                      </span>
+                      {item.isFeatured && (
+                        <span style={{ marginLeft: "0.4rem", fontSize: "0.7rem", background: "rgba(199,0,151,0.1)", color: "var(--adm-accent)", borderRadius: "999px", padding: "0.15rem 0.5rem", fontWeight: 700 }}>
+                          ⭐ Destaque
+                        </span>
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="list-item-actions">
+                    <button className="btn ghost sm" onClick={() => openModal(item)}>✏️ Editar</button>
+                    <button className="btn danger sm" onClick={() => handleDelete(item.id, item.name)}>🗑️</button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* ── Modal ── */}
+      <div className={`modal-overlay ${modalOpen ? "" : "hidden"}`} onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}>
+        <div className="modal-box">
+          <div className="modal-title">
+            <span>{editingId ? "✏️ Editar produto" : "✨ Novo produto"}</span>
+            <button className="btn ghost sm" onClick={closeModal} type="button">✕</button>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <div style={{ background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: "0.65rem", padding: "0.75rem 1rem", marginBottom: "1rem", color: "var(--adm-danger)", fontSize: "0.85rem" }}>
+                ⚠️ {error}
               </div>
-              <div className="actions-row">
-                <button className="btn" onClick={() => startEdit(item)}>Editar</button>
-                <button className="btn danger" onClick={() => removeProduct(item.id)}>Excluir</button>
+            )}
+
+            {/* ── Image upload ── */}
+            <label style={{ marginBottom: "1rem" }}>
+              Foto do produto
+              <div
+                className="img-upload-area"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {(previewUrl || firstImgUrl) ? (
+                  <img src={previewUrl || firstImgUrl} alt="Preview" />
+                ) : (
+                  <>
+                    <span className="upload-icon">📷</span>
+                    <span className="upload-hint">
+                      {uploading ? "⏳ Enviando e otimizando..." : "Clique para enviar imagens"}
+                      <br />
+                      <small>JPG, PNG, WEBP — converte automaticamente para WebP</small>
+                    </span>
+                  </>
+                )}
               </div>
-            </article>
-          ))}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleUpload}
+                style={{ display: "none" }}
+              />
+              {(previewUrl || firstImgUrl) && (
+                <button
+                  type="button"
+                  className="btn ghost sm"
+                  style={{ marginTop: "0.4rem" }}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {uploading ? "⏳ Enviando..." : "📤 Adicionar mais imagens"}
+                </button>
+              )}
+            </label>
+
+            {/* ── Name + Slug ── */}
+            <div className="form-grid-2" style={{ marginBottom: "1rem" }}>
+              <label>
+                Nome do produto *
+                <input
+                  value={form.name}
+                  onChange={(e) => setField("name", e.target.value)}
+                  placeholder="Ex: Base Velvet Glow"
+                  required
+                />
+              </label>
+              <label>
+                Slug (URL)
+                <input
+                  value={form.slug}
+                  onChange={(e) => setField("slug", e.target.value)}
+                  placeholder="base-velvet-glow"
+                />
+              </label>
+            </div>
+
+            {/* ── Category + SKU ── */}
+            <div className="form-grid-2" style={{ marginBottom: "1rem" }}>
+              <label>
+                Categoria *
+                <select value={form.categoryId} onChange={(e) => setField("categoryId", e.target.value)} required>
+                  <option value="">Selecione uma categoria</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                SKU
+                <input
+                  value={form.sku}
+                  onChange={(e) => setField("sku", e.target.value)}
+                  placeholder="Ex: BASE-VG-001"
+                />
+              </label>
+            </div>
+
+            {/* ── Prices + Stock + Brand ── */}
+            <div className="form-grid-2" style={{ marginBottom: "1rem" }}>
+              <label>
+                Preço (R$) *
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.price}
+                  onChange={(e) => setField("price", e.target.value)}
+                  placeholder="0,00"
+                  required
+                />
+              </label>
+              <label>
+                Preço promocional (R$)
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={form.promoPrice}
+                  onChange={(e) => setField("promoPrice", e.target.value)}
+                  placeholder="0,00 (opcional)"
+                />
+              </label>
+              <label>
+                Estoque
+                <input
+                  type="number"
+                  min="0"
+                  value={form.stock}
+                  onChange={(e) => setField("stock", e.target.value)}
+                />
+              </label>
+              <label>
+                Marca
+                <input
+                  value={form.brand}
+                  onChange={(e) => setField("brand", e.target.value)}
+                  placeholder="Ex: Lumiere"
+                />
+              </label>
+            </div>
+
+            {/* ── Descriptions ── */}
+            <label style={{ marginBottom: "1rem" }}>
+              Descrição curta
+              <input
+                value={form.shortDesc}
+                onChange={(e) => setField("shortDesc", e.target.value)}
+                placeholder="Resumo rápido do produto"
+              />
+            </label>
+            <label style={{ marginBottom: "1rem" }}>
+              Descrição completa
+              <textarea
+                rows={3}
+                value={form.description}
+                onChange={(e) => setField("description", e.target.value)}
+                placeholder="Descreva benefícios, ingredientes, modo de uso..."
+              />
+            </label>
+
+            {/* ── URLs de imagens (manual) ── */}
+            <label style={{ marginBottom: "1rem" }}>
+              URLs das imagens (1 por linha)
+              <textarea
+                rows={3}
+                value={form.imagesText}
+                onChange={(e) => {
+                  setField("imagesText", e.target.value);
+                  const first = e.target.value.split("\n")[0]?.trim();
+                  if (first) setPreviewUrl(first);
+                }}
+                placeholder="https://res.cloudinary.com/..."
+              />
+              <small>As imagens enviadas pelo botão acima aparecem aqui automaticamente.</small>
+            </label>
+
+            {/* ── Toggles ── */}
+            <div className="form-grid-2" style={{ marginBottom: "0.5rem" }}>
+              <label className="check-row" style={{ flexDirection: "row", textTransform: "none", letterSpacing: 0, fontWeight: 500, color: "var(--adm-text)", fontSize: "0.88rem" }}>
+                <input
+                  type="checkbox"
+                  checked={form.isActive}
+                  onChange={(e) => setField("isActive", e.target.checked)}
+                />
+                Produto ativo na loja
+              </label>
+              <label className="check-row" style={{ flexDirection: "row", textTransform: "none", letterSpacing: 0, fontWeight: 500, color: "var(--adm-text)", fontSize: "0.88rem" }}>
+                <input
+                  type="checkbox"
+                  checked={form.isFeatured}
+                  onChange={(e) => setField("isFeatured", e.target.checked)}
+                />
+                ⭐ Produto em destaque
+              </label>
+            </div>
+
+            <div className="modal-actions">
+              <button type="button" className="btn ghost" onClick={closeModal}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn primary">
+                {editingId ? "💾 Salvar alterações" : "✨ Criar produto"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-    </section>
+    </>
   );
 }
