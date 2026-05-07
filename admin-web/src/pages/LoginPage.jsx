@@ -13,6 +13,9 @@ export function LoginPage({ onSuccess }) {
     setLoading(true);
     try {
       const data = await login(email, password);
+      if (!data?.accessToken || !data?.user) {
+        throw new Error("Resposta invalida da API. Verifique VITE_API_URL e tente novamente.");
+      }
       localStorage.setItem("admin_token", data.accessToken);
       localStorage.setItem("admin_user", JSON.stringify(data.user));
       onSuccess(data.user);
