@@ -60,6 +60,7 @@ export function ProductsPage() {
   const [editingId, setEditingId]     = useState("");
   const [loading, setLoading]         = useState(false);
   const [uploading, setUploading]     = useState(false);
+  const [submitting, setSubmitting]   = useState(false);
   const [modalOpen, setModalOpen]     = useState(false);
   const [zoomImage, setZoomImage]     = useState(null); // Estado para o Lightbox
   const [error, setError]             = useState("");
@@ -177,12 +178,14 @@ export function ProductsPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    if (submitting) return;
     setError("");
     if (!form.name.trim()) { setError("Nome é obrigatório."); return; }
     if (!form.price)       { setError("Preço é obrigatório."); return; }
     if (!form.categoryId)  { setError("Selecione uma categoria."); return; }
 
     try {
+      setSubmitting(true);
       const payload = {
         name:        form.name.trim(),
         slug:        form.slug.trim() || slugify(form.name),
@@ -212,6 +215,8 @@ export function ProductsPage() {
     } catch (err) {
       setError(err.message);
       showToast(err.message, "error");
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -369,6 +374,12 @@ export function ProductsPage() {
           </div>
 
           <form onSubmit={handleSubmit}>
+            {submitting ? (
+              <div className="submit-progress">
+                <span className="submit-progress-dot" />
+                Salvando produto, aguarde...
+              </div>
+            ) : null}
             {error && (
               <div style={{ background: "rgba(220,38,38,0.08)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: "0.65rem", padding: "0.75rem 1rem", marginBottom: "1rem", color: "var(--adm-danger)", fontSize: "0.85rem" }}>
                 ⚠️ {error}
@@ -559,11 +570,11 @@ export function ProductsPage() {
             </div>
 
             <div className="modal-actions">
-              <button type="button" className="btn ghost" onClick={closeModal}>
+              <button type="button" className="btn ghost" onClick={closeModal} disabled={submitting}>
                 Cancelar
               </button>
-              <button type="submit" className="btn primary">
-                {editingId ? "💾 Salvar alterações" : "✨ Criar produto"}
+              <button type="submit" className="btn primary" disabled={submitting || uploading}>
+                {submitting ? "⏳ Salvando..." : editingId ? "💾 Salvar alterações" : "✨ Criar produto"}
               </button>
             </div>
           </form>

@@ -8,15 +8,47 @@ const SECTION_OPTIONS = [
   { value: "DESTAQUES", label: "Destaques" },
 ];
 
-export function HomeSectionsPage() {
+export function HomeSectionsPage({ fixedType = "", title = "Home Sections" }) {
   const [products, setProducts] = useState([]);
-  const [type, setType] = useState("HERO");
+  const [type, setType] = useState(fixedType || "HERO");
   const [selectedIds, setSelectedIds] = useState([]);
+  const [searchAvailable, setSearchAvailable] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const productMap = useMemo(() => new Map(products.map((p) => [p.id, p])), [products]);
+  const selectedTypeLabel = SECTION_OPTIONS.find((opt) => opt.value === type)?.label || type;
+
+  const selectedProducts = useMemo(
+    () =>
+      selectedIds
+        .map((id) => productMap.get(id))
+        .filter(Boolean),
+    [selectedIds, productMap],
+  );
+
+  const availableProducts = useMemo(
+    () => products.filter((product) => !selectedIds.includes(product.id)),
+    [products, selectedIds],
+  );
+
+  const filteredAvailableProducts = useMemo(() => {
+    const term = searchAvailable.trim().toLowerCase();
+    if (!term) return availableProducts;
+    return availableProducts.filter((product) => {
+      const name = String(product.name || "").toLowerCase();
+      const category = String(product.category?.name || "").toLowerCase();
+      return name.includes(term) || category.includes(term);
+    });
+  }, [availableProducts, searchAvailable]);
+
+  function getProductImage(product) {
+    return (
+      product?.images?.[0]?.url ||
+      "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=500"
+    );
+  }
 
   useEffect(() => {
     async function loadBase() {
@@ -29,6 +61,11 @@ export function HomeSectionsPage() {
     }
     loadBase();
   }, []);
+
+  useEffect(() => {
+    if (!fixedType) return;
+    setType(fixedType);
+  }, [fixedType]);
 
   useEffect(() => {
     async function loadSection() {
@@ -96,27 +133,65 @@ export function HomeSectionsPage() {
   return (
     <section className="page-grid">
       <div className="card">
-        <h2>Home Sections</h2>
-        <label>
-          Secao
-          <select value={type} onChange={(e) => setType(e.target.value)}>
-            {SECTION_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </label>
+        <div className="page-header">
+          <div>
+            <h2 className="page-header-title">{title}</h2>
+            <p className="page-header-sub">Crie e edite os produtos da vitrine com ordem e controle total.</p>
+          </div>
+        </div>
+
+        {!fixedType ? (
+          <label>
+            Secao
+            <select value={type} onChange={(e) => setType(e.target.value)}>
+              {SECTION_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          <p className="page-header-sub">Secao atual: <strong>{selectedTypeLabel}</strong></p>
+        )}
 
         <label>
           Adicionar produto na secao
           <select onChange={(e) => { addProduct(e.target.value); e.target.value = ""; }} defaultValue="">
             <option value="">Selecione um produto</option>
-            {products.map((product) => (
+            {availableProducts.map((product) => (
               <option key={product.id} value={product.id}>
                 {product.name}
               </option>
             ))}
           </select>
         </label>
+
+        <label>
+          Buscar produto
+          <input
+            type="text"
+            placeholder="Digite nome ou categoria..."
+            value={searchAvailable}
+            onChange={(e) => setSearchAvailable(e.target.value)}
+          />
+        </label>
+
+        <div className="available-products-grid">
+          {filteredAvailableProducts.map((product) => (
+            <article key={product.id} className="available-product-card">
+              <img src={getProductImage(product)} alt={product.name} className="available-product-image" />
+              <div className="available-product-content">
+                <strong>{product.name}</strong>
+                <p>{product.category?.name || "Sem categoria"}</p>
+              </div>
+              <button className="btn sm" type="button" onClick={() => addProduct(product.id)}>
+                Adicionar
+              </button>
+            </article>
+          ))}
+          {!filteredAvailableProducts.length ? (
+            <p className="page-header-sub">Nenhum produto encontrado para adicionar.</p>
+          ) : null}
+        </div>
 
         <div className="actions-row">
           <button className="btn primary" onClick={saveSection} disabled={saving}>
@@ -128,21 +203,25 @@ export function HomeSectionsPage() {
       </div>
 
       <div className="card">
-        <h2>Ordem dos itens ({SECTION_OPTIONS.find((opt) => opt.value === type)?.label})</h2>
+        <div className="page-header">
+          <div>
+            <h2 className="page-header-title">Produtos selecionados ({selectedTypeLabel})</h2>
+            <p className="page-header-sub">Use as setas para ajustar a ordem de exibicao na home.</p>
+          </div>
+        </div>
         <div className="list-wrap">
-          {selectedIds.map((id) => {
-            const product = productMap.get(id);
-            if (!product) return null;
+          {selectedProducts.map((product) => {
             return (
-              <article key={id} className="list-item">
-                <div>
+              <article key={product.id} className="list-item">
+                <img src={getProductImage(product)} alt={product.name} className="list-item-img" />
+                <div className="list-item-info">
                   <strong>{product.name}</strong>
                   <p>{product.category?.name || "Sem categoria"}</p>
                 </div>
                 <div className="actions-row">
-                  <button className="btn" onClick={() => move(id, -1)}>↑</button>
-                  <button className="btn" onClick={() => move(id, 1)}>↓</button>
-                  <button className="btn danger" onClick={() => removeProduct(id)}>Remover</button>
+                  <button className="btn" onClick={() => move(product.id, -1)}>↑</button>
+                  <button className="btn" onClick={() => move(product.id, 1)}>↓</button>
+                  <button className="btn danger" onClick={() => removeProduct(product.id)}>Remover</button>
                 </div>
               </article>
             );

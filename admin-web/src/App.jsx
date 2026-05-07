@@ -17,7 +17,9 @@ function getStoredUser() {
 const NAV_MENU = [
   { id: "products",  label: "Produtos",       icon: "🛍️", section: "Catálogo" },
   { id: "categories",label: "Categorias",     icon: "🏷️", section: "Catálogo" },
-  { id: "sections",  label: "Home Sections",  icon: "🏠", section: "Vitrine" },
+  { id: "sections-launches",  label: "Lancamentos",  icon: "🚀", section: "Vitrine" },
+  { id: "sections-highlights",label: "Destaques",    icon: "⭐", section: "Vitrine" },
+  { id: "sections",  label: "Outras Secoes Home",  icon: "🏠", section: "Vitrine" },
   { id: "settings",  label: "Configurações",  icon: "⚙️", section: "Sistema" },
 ];
 
@@ -91,10 +93,16 @@ export function App() {
         </header>
 
         <div className="page-content">
-          {currentTab === "products"   ? <ProductsPage />     : null}
-          {currentTab === "categories" ? <CategoriesPage />   : null}
-          {currentTab === "sections"   ? <HomeSectionsPage /> : null}
-          {currentTab === "settings"   ? <SettingsPage />     : null}
+          {currentTab === "products" ? <ProductsPage /> : null}
+          {currentTab === "categories" ? <CategoriesPage /> : null}
+          {currentTab === "sections-launches" ? (
+            <HomeSectionsPage fixedType="LANCAMENTOS" title="Gestao de Lancamentos" />
+          ) : null}
+          {currentTab === "sections-highlights" ? (
+            <HomeSectionsPage fixedType="DESTAQUES" title="Gestao de Destaques" />
+          ) : null}
+          {currentTab === "sections" ? <HomeSectionsPage title="Gestao de secoes da Home" /> : null}
+          {currentTab === "settings" ? <SettingsPage /> : null}
         </div>
       </main>
     </div>

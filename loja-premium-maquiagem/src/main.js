@@ -224,6 +224,54 @@ function buildProductCard(product) {
   `;
 }
 
+function resolveProductImage(product) {
+  return (
+    product?.images?.[0]?.url ||
+    "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1200"
+  );
+}
+
+function buildHomeFeaturedItem(product) {
+  const name = product?.name || "Produto";
+  const price = Number(product?.price || 0);
+  const categorySlug = normalizeCategorySlug(product?.category?.slug || product?.category?.name || "maquiagem");
+  const image = resolveProductImage(product);
+  return `
+    <article class="featured-item" data-detail-card="true" data-product="${name}" data-price="${price}" data-category="${categorySlug}">
+      <img src="${image}" alt="${name}" />
+      <div>
+        <h3>${name}</h3>
+        <p class="featured-price">${formatPriceLabel(price)}</p>
+        <button class="button button-buy featured-buy-btn" type="button">Comprar agora</button>
+      </div>
+    </article>
+  `;
+}
+
+async function hydrateHomeFeaturedSections() {
+  const launchTrack = document.getElementById("launch-carousel");
+  const highlightsTrack = document.getElementById("highlights-carousel");
+  if (!launchTrack && !highlightsTrack) return;
+
+  try {
+    const response = await fetch(`${PUBLIC_API_URL}/public/home`);
+    if (!response.ok) return;
+    const homeData = await response.json();
+
+    const launches = Array.isArray(homeData?.lancamentos) ? homeData.lancamentos : [];
+    const highlights = Array.isArray(homeData?.destaques) ? homeData.destaques : [];
+
+    if (launchTrack && launches.length) {
+      launchTrack.innerHTML = launches.map(buildHomeFeaturedItem).join("");
+    }
+    if (highlightsTrack && highlights.length) {
+      highlightsTrack.innerHTML = highlights.map(buildHomeFeaturedItem).join("");
+    }
+  } catch (_error) {
+    // fallback: keep static HTML content when API is unavailable
+  }
+}
+
 function renderProductsSkeleton(grid, count = 6) {
   grid.innerHTML = Array.from({ length: count })
     .map(
@@ -769,6 +817,7 @@ function setupProductDetailsPage() {
 
 async function initPage() {
   await hydrateProductsFromApi();
+  await hydrateHomeFeaturedSections();
   setupFilters();
   setupLiveCategoryShortcuts();
   setupSearch();
