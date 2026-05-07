@@ -74,13 +74,33 @@ export function CategoriesPage() {
   return (
     <section className="page-grid">
       <div className="card">
-        <h2>{editingId ? "Editar categoria" : "Nova categoria"}</h2>
-        <form onSubmit={handleSubmit} className="form-grid">
-          <label>Nome<input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required /></label>
-          <label>Slug<input value={form.slug} onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))} required /></label>
-          <label>Descricao<input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} /></label>
-          <label>Ordem<input type="number" value={form.sortOrder} onChange={(e) => setForm((prev) => ({ ...prev, sortOrder: e.target.value }))} /></label>
-          <label className="check-row"><input type="checkbox" checked={form.isActive} onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))} /> Ativa</label>
+        <div className="page-header">
+          <div>
+            <h2 className="page-header-title">{editingId ? "Editar categoria" : "Nova categoria"}</h2>
+            <p className="page-header-sub">Organize o catalogo por secao, com slug e ordem de exibicao.</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="form-grid form-grid-2">
+          <label>
+            Nome
+            <input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required />
+          </label>
+          <label>
+            Slug
+            <input value={form.slug} onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))} required />
+          </label>
+          <label className="form-full">
+            Descricao
+            <input value={form.description} onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))} />
+          </label>
+          <label>
+            Ordem
+            <input type="number" value={form.sortOrder} onChange={(e) => setForm((prev) => ({ ...prev, sortOrder: e.target.value }))} />
+          </label>
+          <label className="check-row">
+            <input type="checkbox" checked={form.isActive} onChange={(e) => setForm((prev) => ({ ...prev, isActive: e.target.checked }))} /> Ativa
+          </label>
           <div className="actions-row">
             <button className="btn primary" type="submit">{editingId ? "Salvar" : "Criar categoria"}</button>
             {editingId ? <button className="btn" type="button" onClick={() => { setEditingId(""); setForm(initialForm); }}>Cancelar</button> : null}
@@ -89,17 +109,34 @@ export function CategoriesPage() {
       </div>
 
       <div className="card">
-        <h2>Categorias</h2>
+        <div className="page-header">
+          <div>
+            <h2 className="page-header-title">Categorias</h2>
+            <p className="page-header-sub">Lista de categorias cadastradas no painel.</p>
+          </div>
+        </div>
         {loading ? <p>Carregando...</p> : null}
         {error ? <p className="error-text">{error}</p> : null}
         <div className="list-wrap">
+          {!loading && !categories.length ? (
+            <div className="empty-state">
+              <span className="empty-icon">📁</span>
+              Nenhuma categoria cadastrada ainda.
+            </div>
+          ) : null}
           {categories.map((item) => (
             <article key={item.id} className="list-item">
-              <div>
+              <div className="list-item-info">
                 <strong>{item.name}</strong>
-                <p>{item.slug} | ordem: {item.sortOrder} | {item.isActive ? "ativa" : "inativa"}</p>
+                <p>
+                  {item.slug} | ordem: {item.sortOrder} |
+                  {" "}
+                  <span className={`badge-status ${item.isActive ? "active" : "inactive"}`}>
+                    {item.isActive ? "ativa" : "inativa"}
+                  </span>
+                </p>
               </div>
-              <div className="actions-row">
+              <div className="list-item-actions">
                 <button className="btn" onClick={() => startEdit(item)}>Editar</button>
                 <button className="btn danger" onClick={() => removeCategory(item.id)}>Excluir</button>
               </div>
