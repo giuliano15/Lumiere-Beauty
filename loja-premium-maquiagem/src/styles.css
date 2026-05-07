@@ -468,6 +468,13 @@ h1, h2, h3, h4 {
   letter-spacing: -0.02em;
 }
 
+.featured-item > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .featured-item p {
   color: var(--text-muted);
   font-weight: 500;
@@ -485,6 +492,20 @@ h1, h2, h3, h4 {
   display: inline-block;
   letter-spacing: -0.01em;
   text-shadow: 0 6px 18px rgba(199, 0, 151, 0.22);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  margin-top: 0.35rem;
+  text-align: center;
+  box-shadow: none;
+}
+
+.featured-buy-btn {
+  margin-top: 0.55rem;
+  padding: 0.58rem 1rem;
+  font-size: 0.85rem;
+  width: 100%;
+  justify-content: center;
 }
 
 /* ── Button Styles ───────────────────────────────── */
@@ -1000,6 +1021,40 @@ h1, h2, h3, h4 {
 .detail-cta-group {
   display: grid;
   gap: 0.6rem;
+}
+
+.detail-cta-group .button {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+#detail-add-cart {
+  background: linear-gradient(135deg, var(--rose-accent), #980074);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(199, 0, 151, 0.22);
+}
+
+#detail-add-cart:hover {
+  transform: translateY(-1px);
+}
+
+#detail-favorite {
+  border: 1px solid #ecd8e5;
+  background: #fff;
+}
+
+.detail-whatsapp-btn {
+  border: 1px solid #8ad4ab;
+  background: #f4fff8;
+  color: #1f8f52;
+  box-shadow: none;
+}
+
+.detail-whatsapp-btn:hover {
+  background: #ebfff3;
 }
 
 .detail-benefits {

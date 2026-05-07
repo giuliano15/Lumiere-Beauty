@@ -340,6 +340,50 @@ function setupProductCardNavigation() {
   });
 }
 
+function setupHomeFeaturedNavigation() {
+  const cards = Array.from(document.querySelectorAll("[data-detail-card='true']"));
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    card.addEventListener("click", (event) => {
+      const interactive = event.target.closest("a, button, input, textarea, select, label");
+      if (interactive) return;
+
+      const name = card.dataset.product || "";
+      const price = Number(card.dataset.price || 0);
+      const category = card.dataset.category || "maquiagem";
+      const image = card.querySelector("img")?.getAttribute("src") || "";
+      if (!name) return;
+
+      const href = `produto.html?produto=${encodeURIComponent(name)}&preco=${price}&categoria=${encodeURIComponent(category)}&imagem=${encodeURIComponent(image)}`;
+      window.location.href = href;
+    });
+  });
+}
+
+function setupHomeFeaturedBuyButtons() {
+  const buttons = Array.from(document.querySelectorAll(".featured-buy-btn"));
+  if (!buttons.length) return;
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const card = button.closest("[data-detail-card='true']");
+      if (!card) return;
+
+      const name = card.dataset.product || "";
+      const price = Number(card.dataset.price || 0);
+      const category = card.dataset.category || "maquiagem";
+      const image = card.querySelector("img")?.getAttribute("src") || "";
+      if (!name) return;
+
+      upsertCartItem(name, price, 1, image, category);
+      renderCart();
+      openCart();
+    });
+  });
+}
+
 function renderCart() {
   const cartItemsNode = document.getElementById("cart-items");
   const cartCountNode = document.getElementById("cart-count");
@@ -707,7 +751,7 @@ function setupProductDetailsPage() {
     updateWhatsappLink();
     addCart.textContent = "Adicionado ao carrinho";
     setTimeout(() => {
-      addCart.textContent = "Adicionar ao carrinho";
+      addCart.textContent = "Comprar agora";
     }, 1200);
   });
 
@@ -738,6 +782,8 @@ async function initPage() {
   setupFeaturedCarousel();
   setupStripCarousel("launch-carousel", "launch-prev", "launch-next");
   setupStripCarousel("highlights-carousel", "highlights-prev", "highlights-next");
+  setupHomeFeaturedNavigation();
+  setupHomeFeaturedBuyButtons();
   setupHeroProductSlider();
   setupModernShowcaseCarousel();
   setupProductDetailsPage();
