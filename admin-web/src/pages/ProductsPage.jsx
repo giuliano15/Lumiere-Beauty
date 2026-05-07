@@ -61,6 +61,7 @@ export function ProductsPage() {
   const [loading, setLoading]         = useState(false);
   const [uploading, setUploading]     = useState(false);
   const [modalOpen, setModalOpen]     = useState(false);
+  const [zoomImage, setZoomImage]     = useState(null); // Estado para o Lightbox
   const [error, setError]             = useState("");
   const [toast, setToast]             = useState({ message: "", type: "success" });
   const [previewUrl, setPreviewUrl]   = useState("");
@@ -314,7 +315,14 @@ export function ProductsPage() {
               return (
                 <div key={item.id} className="list-item">
                   {img ? (
-                    <img className="list-item-img" src={img} alt={item.name} />
+                    <img
+                      className="list-item-img"
+                      src={img}
+                      alt={item.name}
+                      onClick={() => setZoomImage(img)}
+                      style={{ cursor: "zoom-in" }}
+                      title="Clique para ampliar"
+                    />
                   ) : (
                     <div className="list-item-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem" }}>
                       🖼️
@@ -561,6 +569,30 @@ export function ProductsPage() {
           </form>
         </div>
       </div>
+
+      {/* ── Lightbox (Zoom da Imagem) ── */}
+      {zoomImage && (
+        <div
+          className="modal-overlay"
+          style={{ display: "flex", alignItems: "center", justifyContent: "center", zIndex: 300 }}
+          onClick={() => setZoomImage(null)}
+        >
+          <div style={{ position: "relative", maxWidth: "90vw", maxHeight: "90vh" }}>
+            <button
+              className="btn ghost sm"
+              style={{ position: "absolute", top: "-40px", right: "0", color: "white", borderColor: "rgba(255,255,255,0.3)", background: "rgba(0,0,0,0.5)" }}
+              onClick={() => setZoomImage(null)}
+            >
+              FECHAR ✕
+            </button>
+            <img
+              src={zoomImage}
+              alt="Zoom"
+              style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "1rem", boxShadow: "0 20px 50px rgba(0,0,0,0.5)" }}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
