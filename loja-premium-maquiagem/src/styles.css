@@ -557,6 +557,7 @@ h1, h2, h3, h4 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 1rem;
+  align-items: stretch;
 }
 
 .product-card {
@@ -568,6 +569,11 @@ h1, h2, h3, h4 {
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  height: 100%;
+}
+
+.product-card h3 {
+  min-height: 3.2em;
 }
 
 .product-link {
@@ -604,6 +610,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  margin-top: auto;
 }
 
 .qty-btn {
@@ -625,6 +632,7 @@ h1, h2, h3, h4 {
 
 .add-to-cart {
   width: 100%;
+  margin-top: 0.45rem;
 }
 
 /* ── Trust Strip (Icons/Info) ───────────────────── */
