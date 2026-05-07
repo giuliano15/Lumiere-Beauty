@@ -479,9 +479,12 @@ h1, h2, h3, h4 {
 .featured-item .featured-price {
   color: var(--rose-accent);
   font-weight: 800;
-  font-size: 1.7rem;
+  font-size: 1.75rem;
   line-height: 1.15;
   font-family: 'Outfit', sans-serif;
+  display: inline-block;
+  letter-spacing: -0.01em;
+  text-shadow: 0 6px 18px rgba(199, 0, 151, 0.22);
 }
 
 /* ── Button Styles ───────────────────────────────── */
