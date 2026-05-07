@@ -366,8 +366,10 @@ export function ProductsPage() {
             )}
 
             {/* ── Image upload ── */}
-            <label style={{ marginBottom: "1rem" }}>
-              Foto do produto
+            <div style={{ marginBottom: "1rem" }}>
+              <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "var(--adm-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.4rem" }}>
+                Foto do produto
+              </div>
               <div
                 className="img-upload-area"
                 onClick={() => fileInputRef.current?.click()}
@@ -403,7 +405,7 @@ export function ProductsPage() {
                   {uploading ? "⏳ Enviando..." : "📤 Adicionar mais imagens"}
                 </button>
               )}
-            </label>
+            </div>
 
             {/* ── Name + Slug ── */}
             <div className="form-grid-2" style={{ marginBottom: "1rem" }}>
