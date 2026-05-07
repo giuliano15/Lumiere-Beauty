@@ -1266,6 +1266,7 @@ h1, h2, h3, h4 {
     grid-template-columns: 1fr;
   }
 
+
   .product-detail-page {
     grid-template-columns: 1fr;
   }
@@ -1274,3 +1275,34 @@ h1, h2, h3, h4 {
     height: 290px;
   }
 }
+
+/* ── Skeleton Loading ── */
+@keyframes skeleton-pulse {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.45; }
+  100% { opacity: 1; }
+}
+
+.product-skeleton {
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.skeleton-img {
+  height: 180px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #f0dde5, #faeaef, #f0dde5);
+  background-size: 200% 100%;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: #f0dde5;
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-line.short { width: 40%; }
+.skeleton-line.mid   { width: 65%; }
+

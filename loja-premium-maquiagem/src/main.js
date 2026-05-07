@@ -224,25 +224,77 @@ function buildProductCard(product) {
   `;
 }
 
+function renderProductsSkeleton(grid, count = 6) {
+  grid.innerHTML = Array.from({ length: count })
+    .map(
+      () => `
+    <article class="product-card product-skeleton" aria-hidden="true">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-line short"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line mid"></div>
+    </article>
+  `,
+    )
+    .join("");
+}
+
+function renderProductsError(grid, onRetry) {
+  grid.innerHTML = `
+    <div class="products-error" style="grid-column:1/-1;text-align:center;padding:2.5rem 1rem;">
+      <p style="font-size:1.1rem;color:#c0392b;margin-bottom:1rem;">
+        ⚠️ Não foi possível carregar os produtos. Verifique sua conexão e tente novamente.
+      </p>
+      <button id="retry-load-products" style="background:#d4a7c9;color:#fff;border:none;padding:.7rem 2rem;border-radius:8px;font-size:1rem;cursor:pointer;">
+        Tentar novamente
+      </button>
+    </div>
+  `;
+  document.getElementById("retry-load-products")?.addEventListener("click", onRetry);
+}
+
 async function hydrateProductsFromApi() {
   const grid = document.getElementById("products-grid");
   if (!grid) return;
+
+  renderProductsSkeleton(grid);
 
   const fixedCategory = detectCategoryByPage();
   const query = new URLSearchParams();
   if (fixedCategory) query.set("category", fixedCategory);
   const url = `${PUBLIC_API_URL}/public/products${query.toString() ? `?${query.toString()}` : ""}`;
 
-  try {
-    const response = await fetch(url);
-    if (!response.ok) return;
-    const products = await response.json();
-    if (!Array.isArray(products) || !products.length) return;
-    grid.innerHTML = products.map(buildProductCard).join("");
-  } catch (_error) {
-    // Fallback: mantem os cards estaticos se API indisponivel.
-  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+
+  const attempt = async () => {
+    renderProductsSkeleton(grid);
+    const abortCtrl = new AbortController();
+    const t = setTimeout(() => abortCtrl.abort(), 15000);
+    try {
+      const response = await fetch(url, { signal: abortCtrl.signal });
+      clearTimeout(t);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const products = await response.json();
+      if (!Array.isArray(products) || !products.length) {
+        grid.innerHTML = `<p style="grid-column:1/-1;text-align:center;padding:2rem;color:#888;">Nenhum produto encontrado.</p>`;
+        return;
+      }
+      grid.innerHTML = products.map(buildProductCard).join("");
+      setupQuantityControls();
+      setupCartActions();
+      setupFilters();
+      activateCategory(selectedCategory);
+    } catch (_error) {
+      clearTimeout(t);
+      renderProductsError(grid, attempt);
+    }
+  };
+
+  clearTimeout(timeout);
+  await attempt();
 }
+
 
 function setupQuantityControls() {
   const productCards = Array.from(document.querySelectorAll(".product-card"));

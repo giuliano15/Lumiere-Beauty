@@ -4,7 +4,17 @@ let prismaInstance;
 
 function getPrisma() {
   if (!prismaInstance) {
-    prismaInstance = new PrismaClient();
+    prismaInstance = new PrismaClient({
+      datasources: {
+        db: { url: process.env.DATABASE_URL },
+      },
+      log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+    });
+
+    // Falha rapida se DATABASE_URL nao estiver configurada
+    if (!process.env.DATABASE_URL) {
+      console.error("[prisma] DATABASE_URL nao definida. Verifique as variaveis de ambiente no Vercel.");
+    }
   }
   return prismaInstance;
 }
