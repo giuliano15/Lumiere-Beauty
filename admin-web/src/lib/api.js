@@ -1,9 +1,10 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 const REQUEST_TIMEOUT_MS = 12000;
+const UPLOAD_TIMEOUT_MS  = 60000; // uploads precisam de mais tempo (cold start + Cloudinary)
 
-async function fetchWithTimeout(url, options = {}) {
+async function fetchWithTimeout(url, options = {}, timeoutMs = REQUEST_TIMEOUT_MS) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
   try {
     return await fetch(url, { ...options, signal: controller.signal });
   } catch (error) {
@@ -49,11 +50,15 @@ export async function uploadFiles(files) {
   const formData = new FormData();
   files.forEach((file) => formData.append("files", file));
 
-  const response = await fetchWithTimeout(`${API_URL}/admin/upload`, {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: formData,
-  });
+  const response = await fetchWithTimeout(
+    `${API_URL}/admin/upload`,
+    {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: formData,
+    },
+    UPLOAD_TIMEOUT_MS, // 60s para uploads
+  );
 
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
@@ -62,3 +67,4 @@ export async function uploadFiles(files) {
 
   return response.json();
 }
+

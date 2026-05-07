@@ -154,6 +154,7 @@ export function ProductsPage() {
   async function handleUpload(event) {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
+
     setUploading(true);
     setError("");
     try {
@@ -161,7 +162,7 @@ export function ProductsPage() {
       const current = form.imagesText.trim();
       const merged = [...(current ? current.split("\n").filter(Boolean) : []), ...result.urls];
       setField("imagesText", merged.join("\n"));
-      if (merged[0]) setPreviewUrl(merged[0]);
+      if (result.urls[0]) setPreviewUrl(result.urls[0]);
       showToast("Imagens enviadas com sucesso!");
     } catch (err) {
       setError(`Erro no upload: ${err.message}`);
@@ -171,6 +172,7 @@ export function ProductsPage() {
       event.target.value = "";
     }
   }
+
 
   async function handleSubmit(event) {
     event.preventDefault();
