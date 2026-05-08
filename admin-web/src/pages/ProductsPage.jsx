@@ -150,8 +150,27 @@ export function ProductsPage() {
   function setField(key, value) {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
-      // Auto-gera slug pelo nome (somente criação)
-      if (key === "name" && !editingId) next.slug = slugify(value);
+      
+      // Auto-gera slug pelo nome
+      if (key === "name") {
+        next.slug = value
+          .toLowerCase()
+          .trim()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/[^\w-]+/g, "")
+          .replace(/--+/g, "-");
+
+        // Gerar SKU automático apenas para novos produtos
+        if (!editingId) {
+          const initials = value.trim().substring(0, 3).toUpperCase().replace(/[^A-Z0-9]/g, "X");
+          if (initials) {
+            const random = Math.floor(1000 + Math.random() * 9000);
+            next.sku = `${initials}-${random}`;
+          }
+        }
+      }
       return next;
     });
   }
@@ -457,8 +476,8 @@ export function ProductsPage() {
               </small>
             </div>
 
-            {/* ── Name + Slug ── */}
-            <div className="form-grid-2" style={{ marginBottom: "1rem" }}>
+            {/* ── Nome ── */}
+            <div style={{ marginBottom: "1rem" }}>
               <label>
                 Nome do produto *
                 <input
@@ -468,17 +487,9 @@ export function ProductsPage() {
                   required
                 />
               </label>
-              <label>
-                Slug (Identificador na URL)
-                <input
-                  value={form.slug}
-                  onChange={(e) => setField("slug", e.target.value)}
-                  placeholder="base-velvet-glow"
-                />
-              </label>
             </div>
 
-            {/* ── Category + SKU ── */}
+            {/* ── Categoria + Marca ── */}
             <div className="form-grid-2" style={{ marginBottom: "1rem" }}>
               <label>
                 Categoria *
@@ -490,11 +501,11 @@ export function ProductsPage() {
                 </select>
               </label>
               <label>
-                SKU
+                Marca
                 <input
-                  value={form.sku}
-                  onChange={(e) => setField("sku", e.target.value)}
-                  placeholder="Ex: BASE-VG-001"
+                  value={form.brand}
+                  onChange={(e) => setField("brand", e.target.value)}
+                  placeholder="Ex: Lumiere"
                 />
               </label>
             </div>
