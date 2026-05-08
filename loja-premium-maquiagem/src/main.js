@@ -269,9 +269,11 @@ function buildHomeHeroSlide(product, index) {
 
 function buildHomeLiveItem(product) {
   const name = product?.name || "Produto";
+  const price = Number(product?.price || 0);
+  const categorySlug = normalizeCategorySlug(product?.category?.slug || product?.category?.name || "maquiagem");
   const image = resolveProductImage(product);
   return `
-    <article class="featured-item">
+    <article class="featured-item" data-detail-card="true" data-product="${name}" data-price="${price}" data-category="${categorySlug}">
       <img src="${image}" alt="${name}" />
       <div><h3>${name}</h3><p>${product?.category?.name || "Coleção"}</p></div>
     </article>
