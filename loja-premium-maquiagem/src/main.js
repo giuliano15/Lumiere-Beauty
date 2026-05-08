@@ -540,15 +540,19 @@ function renderCart() {
   const html = items
     .map(
       (item) => `
-      <div class="cart-item">
+      <div class="cart-item" data-name="${item.name}">
         <a class="cart-item-link" href="produto.html?produto=${encodeURIComponent(item.name)}&preco=${item.price}&categoria=${encodeURIComponent(item.category || "maquiagem")}&imagem=${encodeURIComponent(item.image)}">
           <img src="${item.image}" alt="${item.name}">
         </a>
-        <a class="cart-item-link cart-item-content" href="produto.html?produto=${encodeURIComponent(item.name)}&preco=${item.price}&categoria=${encodeURIComponent(item.category || "maquiagem")}&imagem=${encodeURIComponent(item.image)}">
+        <div class="cart-item-content">
           <p><strong>${item.name}</strong></p>
-          <p class="cart-item-meta">Qtd: <span class="cart-qty-pill">${item.quantity}</span> • ${formatBRL(item.price)} cada</p>
-          <p class="cart-item-total">Subtotal: ${formatBRL(item.price * item.quantity)}</p>
-        </a>
+          <p class="cart-item-total">${formatBRL(item.price * item.quantity)}</p>
+          <div class="cart-qty-controls">
+            <button class="cart-qty-btn cart-qty-minus" data-name="${item.name}" type="button" aria-label="Diminuir">−</button>
+            <span class="cart-qty-pill">${item.quantity}</span>
+            <button class="cart-qty-btn cart-qty-plus" data-name="${item.name}" type="button" aria-label="Aumentar">+</button>
+          </div>
+        </div>
         <button class="remove-item" data-remove="${item.name}" type="button" aria-label="Remover item">🗑</button>
       </div>
     `,
@@ -567,11 +571,42 @@ function renderCart() {
   const checkoutUrl = getWhatsAppCheckoutUrl(items);
   checkoutNode.href = checkoutUrl;
 
+  // Botão remover
   Array.from(document.querySelectorAll(".remove-item")).forEach((button) => {
     button.addEventListener("click", () => {
       const name = button.getAttribute("data-remove");
       if (!name) return;
       cart.delete(name);
+      saveCartToStorage();
+      renderCart();
+    });
+  });
+
+  // Botão diminuir quantidade
+  Array.from(document.querySelectorAll(".cart-qty-minus")).forEach((button) => {
+    button.addEventListener("click", () => {
+      const name = button.getAttribute("data-name");
+      if (!name) return;
+      const item = cart.get(name);
+      if (!item) return;
+      if (item.quantity <= 1) {
+        cart.delete(name);
+      } else {
+        cart.set(name, { ...item, quantity: item.quantity - 1 });
+      }
+      saveCartToStorage();
+      renderCart();
+    });
+  });
+
+  // Botão aumentar quantidade
+  Array.from(document.querySelectorAll(".cart-qty-plus")).forEach((button) => {
+    button.addEventListener("click", () => {
+      const name = button.getAttribute("data-name");
+      if (!name) return;
+      const item = cart.get(name);
+      if (!item) return;
+      cart.set(name, { ...item, quantity: item.quantity + 1 });
       saveCartToStorage();
       renderCart();
     });
