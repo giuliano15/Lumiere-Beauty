@@ -17,9 +17,9 @@ function getStoredUser() {
 const NAV_MENU = [
   { id: "products",  label: "Produtos",       icon: "🛍️", section: "Catálogo" },
   { id: "categories",label: "Categorias",     icon: "🏷️", section: "Catálogo" },
-  { id: "sections-launches",  label: "Lancamentos",  icon: "🚀", section: "Vitrine" },
-  { id: "sections-highlights",label: "Destaques",    icon: "⭐", section: "Vitrine" },
-  { id: "sections",  label: "Outras Secoes Home",  icon: "🏠", section: "Vitrine" },
+  { id: "sections-launches",  label: "Lançamentos",    icon: "🚀", section: "Vitrine" },
+  { id: "sections-highlights",label: "Destaques",     icon: "⭐", section: "Vitrine" },
+  { id: "sections",           label: "Gestão da Home", icon: "🏠", section: "Vitrine" },
   { id: "settings",  label: "Configurações",  icon: "⚙️", section: "Sistema" },
 ];
 

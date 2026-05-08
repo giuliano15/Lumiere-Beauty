@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../lib/api";
 
 const SECTION_OPTIONS = [
-  { value: "HERO", label: "Hero" },
-  { value: "LIVE", label: "Live" },
-  { value: "LANCAMENTOS", label: "Lancamentos" },
+  { value: "HERO", label: "Banner Principal (Topo)" },
+  { value: "LIVE", label: "Vitrine de Ofertas" },
+  { value: "LANCAMENTOS", label: "Lançamentos" },
   { value: "DESTAQUES", label: "Destaques" },
 ];
 

@@ -248,18 +248,75 @@ function buildHomeFeaturedItem(product) {
   `;
 }
 
+function buildHomeHeroSlide(product, index) {
+  const name = product?.name || "Destaque";
+  const image = resolveProductImage(product);
+  const price = Number(product?.price || 0);
+  const categorySlug = normalizeCategorySlug(product?.category?.slug || product?.category?.name || "maquiagem");
+  
+  const encodedName = encodeURIComponent(name);
+  const encodedCategory = encodeURIComponent(categorySlug);
+  const encodedImage = encodeURIComponent(image);
+  const detailHref = `produto.html?produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+
+  return `
+    <a class="hero-product-slide" data-hero-slide="${index}" href="${detailHref}">
+      <img src="${image}" alt="${name}" />
+      <span class="hero-caption">${name}: ${formatBRL(price)}</span>
+    </a>
+  `;
+}
+
+function buildHomeLiveItem(product) {
+  const name = product?.name || "Produto";
+  const image = resolveProductImage(product);
+  return `
+    <article class="featured-item">
+      <img src="${image}" alt="${name}" />
+      <div><h3>${name}</h3><p>${product?.category?.name || "Coleção"}</p></div>
+    </article>
+  `;
+}
+
 async function hydrateHomeFeaturedSections() {
+  const heroTrack = document.querySelector(".hero-product-slider");
+  const liveTrack = document.getElementById("featured-carousel");
   const launchTrack = document.getElementById("launch-carousel");
   const highlightsTrack = document.getElementById("highlights-carousel");
-  if (!launchTrack && !highlightsTrack) return;
 
   try {
     const response = await fetch(`${PUBLIC_API_URL}/public/home`);
     if (!response.ok) return;
     const homeData = await response.json();
 
+    const heroItems = Array.isArray(homeData?.hero) ? homeData.hero : [];
+    const liveItems = Array.isArray(homeData?.live) ? homeData.live : [];
     const launches = Array.isArray(homeData?.lancamentos) ? homeData.lancamentos : [];
     const highlights = Array.isArray(homeData?.destaques) ? homeData.destaques : [];
+
+    if (heroTrack && heroItems.length) {
+      // Manter os botões de navegação e dots se possível, ou reconstruir tudo
+      const navButtons = `
+        <button id="hero-prev" class="hero-nav" type="button" aria-label="Slide anterior">‹</button>
+        <button id="hero-next" class="hero-nav" type="button" aria-label="Proximo slide">›</button>
+      `;
+      heroTrack.innerHTML = heroItems.map(buildHomeHeroSlide).join("") + navButtons;
+      
+      // Re-hidratar os dots
+      const dotsContainer = document.querySelector(".hero-product-dots");
+      if (dotsContainer) {
+        dotsContainer.innerHTML = heroItems.map((_, i) => 
+          `<button class="hero-dot ${i === 0 ? "active" : ""}" data-hero-dot="${i}" type="button"></button>`
+        ).join("");
+      }
+      // Re-iniciar o slider pois o DOM mudou
+      setupHeroProductSlider();
+    }
+
+    if (liveTrack && liveItems.length) {
+      liveTrack.innerHTML = liveItems.map(buildHomeLiveItem).join("");
+      setupHomeFeaturedNavigation();
+    }
 
     if (launchTrack && launches.length) {
       launchTrack.innerHTML = launches.map(buildHomeFeaturedItem).join("");
@@ -267,6 +324,11 @@ async function hydrateHomeFeaturedSections() {
     if (highlightsTrack && highlights.length) {
       highlightsTrack.innerHTML = highlights.map(buildHomeFeaturedItem).join("");
     }
+    
+    // Re-setup navigation listeners for new items
+    setupHomeFeaturedNavigation();
+    setupHomeFeaturedBuyButtons();
+    
   } catch (_error) {
     // fallback: keep static HTML content when API is unavailable
   }
