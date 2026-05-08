@@ -1,5 +1,5 @@
 const WHATSAPP_NUMBER = "5511999999999";
-const PUBLIC_API_URL = "https://lumiere-api-swart.vercel.app";
+const PUBLIC_API_URL = "https://lumiere-api-swart.vercel.app"; // v1.0.1
 const cart = new Map();
 const favorites = new Map();
 let selectedCategory = "todos";
