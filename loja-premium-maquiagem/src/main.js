@@ -195,34 +195,38 @@ function detectCategoryByPage() {
 }
 
 function buildProductCard(product) {
-  const categorySlug = normalizeCategorySlug(product.category?.slug || product.category?.name || "maquiagem");
-  const categoryLabel = product.category?.name || "Maquiagem";
-  const image =
-    product.images?.[0]?.url ||
-    "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1200";
-  const encodedName = encodeURIComponent(product.name);
-  const encodedCategory = encodeURIComponent(categorySlug);
-  const encodedImage = encodeURIComponent(image);
-  const price = Number(product.price || 0);
-  const slug = product.slug || "";
-  const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+  try {
+    const categorySlug = normalizeCategorySlug(product.category?.slug || product.category?.name || "maquiagem");
+    const categoryLabel = product.category?.name || "Maquiagem";
+    const image = product.images?.[0]?.url || "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1200";
+    
+    const encodedName = encodeURIComponent(product.name || "");
+    const encodedCategory = encodeURIComponent(categorySlug);
+    const encodedImage = encodeURIComponent(image);
+    const price = Number(product.price || 0);
+    const slug = product.slug || "";
+    const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
 
-  return `
-    <article class="product-card" data-category="${categorySlug}" data-product="${product.name}" data-price="${price}" data-image="${image}" data-slug="${slug}">
-      <a class="product-link" href="${detailHref}">
-        <img class="product-media" src="${image}" alt="${product.name}" />
-      </a>
-      <p class="product-category">${categoryLabel}</p>
-      <h3><a class="product-link-text" href="${detailHref}">${product.name}</a></h3>
-      <p class="product-price">${formatPriceLabel(price)}</p>
-      <div class="quantity-box">
-        <button class="qty-btn minus" type="button">-</button>
-        <input class="qty-input" type="number" min="1" value="1" />
-        <button class="qty-btn plus" type="button">+</button>
-      </div>
-      <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
-    </article>
-  `;
+    return `
+      <article class="product-card" data-category="${categorySlug}" data-product="${product.name || ""}" data-price="${price}" data-image="${image}" data-slug="${slug}">
+        <a class="product-link" href="${detailHref}">
+          <img class="product-media" src="${image}" alt="${product.name || ""}" />
+        </a>
+        <p class="product-category">${categoryLabel}</p>
+        <h3><a class="product-link-text" href="${detailHref}">${product.name || "Produto sem nome"}</a></h3>
+        <p class="product-price">${formatPriceLabel(price)}</p>
+        <div class="quantity-box">
+          <button class="qty-btn minus" type="button">-</button>
+          <input class="qty-input" type="number" min="1" value="1" />
+          <button class="qty-btn plus" type="button">+</button>
+        </div>
+        <button class="button button-buy add-to-cart" type="button">Comprar agora</button>
+      </article>
+    `;
+  } catch (err) {
+    console.error("Erro ao renderizar card de produto:", err, product);
+    return "";
+  }
 }
 
 function resolveProductImage(product) {
@@ -414,8 +418,9 @@ async function hydrateProductsFromApi() {
       setupProductCardNavigation();
       setupFilters();
       activateCategory(selectedCategory);
-    } catch (_error) {
+    } catch (err) {
       clearTimeout(t);
+      console.error("Erro ao carregar produtos:", err);
       renderProductsError(grid, attempt);
     }
   };
