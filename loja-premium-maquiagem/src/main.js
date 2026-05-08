@@ -272,11 +272,17 @@ function buildHomeLiveItem(product) {
   const price = Number(product?.price || 0);
   const categorySlug = normalizeCategorySlug(product?.category?.slug || product?.category?.name || "maquiagem");
   const image = resolveProductImage(product);
+  
+  const encodedName = encodeURIComponent(name);
+  const encodedCategory = encodeURIComponent(categorySlug);
+  const encodedImage = encodeURIComponent(image);
+  const detailHref = `produto.html?produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+
   return `
-    <article class="featured-item" data-detail-card="true" data-product="${name}" data-price="${price}" data-category="${categorySlug}">
+    <a href="${detailHref}" class="featured-item" style="text-decoration: none; color: inherit; display: block;">
       <img src="${image}" alt="${name}" />
       <div><h3>${name}</h3><p>${product?.category?.name || "Coleção"}</p></div>
-    </article>
+    </a>
   `;
 }
 
