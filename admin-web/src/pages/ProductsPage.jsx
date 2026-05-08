@@ -239,7 +239,7 @@ export function ProductsPage() {
     }
   }
 
-  const firstImgUrl = form.imagesText.split("\n")[0]?.trim() || "";
+  const firstImgUrl = form.images[0] || "";
 
   return (
     <>
