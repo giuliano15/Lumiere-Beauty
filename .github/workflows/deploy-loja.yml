@@ -1,0 +1,17 @@
+name: Deploy Loja to Vercel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'loja-premium-maquiagem/**'
+
+jobs:
+  deploy-loja:
+    runs-on: ubuntu-latest
+    name: Trigger Vercel Deploy (Loja)
+    steps:
+      - name: Trigger Vercel Deploy Hook
+        run: |
+          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_Ij2jpTuxLirdeS5cHs9T1wzmtm8K/rpst4hZope"
