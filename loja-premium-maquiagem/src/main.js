@@ -204,10 +204,10 @@ function buildProductCard(product) {
   const encodedCategory = encodeURIComponent(categorySlug);
   const encodedImage = encodeURIComponent(image);
   const price = Number(product.price || 0);
-  const detailHref = `produto.html?produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+  const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
 
   return `
-    <article class="product-card" data-category="${categorySlug}" data-product="${product.name}" data-price="${price}" data-image="${image}">
+    <article class="product-card" data-category="${categorySlug}" data-product="${product.name}" data-price="${price}" data-image="${image}" data-slug="${slug}">
       <a class="product-link" href="${detailHref}">
         <img class="product-media" src="${image}" alt="${product.name}" />
       </a>
@@ -235,9 +235,11 @@ function buildHomeFeaturedItem(product) {
   const name = product?.name || "Produto";
   const price = Number(product?.price || 0);
   const categorySlug = normalizeCategorySlug(product?.category?.slug || product?.category?.name || "maquiagem");
-  const image = resolveProductImage(product);
+  const slug = product?.slug || "";
+  const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+
   return `
-    <article class="featured-item" data-detail-card="true" data-product="${name}" data-price="${price}" data-category="${categorySlug}">
+    <article class="featured-item" data-detail-card="true" data-product="${name}" data-price="${price}" data-category="${categorySlug}" data-slug="${slug}">
       <img src="${image}" alt="${name}" />
       <div>
         <h3>${name}</h3>
@@ -257,7 +259,8 @@ function buildHomeHeroSlide(product, index) {
   const encodedName = encodeURIComponent(name);
   const encodedCategory = encodeURIComponent(categorySlug);
   const encodedImage = encodeURIComponent(image);
-  const detailHref = `produto.html?produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+  const slug = product?.slug || "";
+  const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
 
   return `
     <a class="hero-product-slide" data-hero-slide="${index}" href="${detailHref}">
@@ -276,10 +279,11 @@ function buildHomeLiveItem(product) {
   const encodedName = encodeURIComponent(name);
   const encodedCategory = encodeURIComponent(categorySlug);
   const encodedImage = encodeURIComponent(image);
-  const detailHref = `produto.html?produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
+  const slug = product?.slug || "";
+  const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
 
   return `
-    <a href="${detailHref}" class="featured-item" style="text-decoration: none; color: inherit; display: block;">
+    <a href="${detailHref}" class="featured-item" style="text-decoration: none; color: inherit; display: block;" data-slug="${slug}">
       <img src="${image}" alt="${name}" />
       <div><h3>${name}</h3><p>${product?.category?.name || "Coleção"}</p></div>
     </a>
@@ -448,7 +452,8 @@ function setupProductCardNavigation() {
     const price = Number(card.dataset.price || 0);
     const category = card.dataset.category || "maquiagem";
     const image = card.dataset.image || "";
-    const detailHref = `produto.html?produto=${encodeURIComponent(product)}&preco=${price}&categoria=${encodeURIComponent(category)}&imagem=${encodeURIComponent(image)}`;
+    const slug = card.dataset.slug || "";
+    const detailHref = `produto.html?slug=${slug}&produto=${encodeURIComponent(product)}&preco=${price}&categoria=${encodeURIComponent(category)}&imagem=${encodeURIComponent(image)}`;
 
     card.addEventListener("click", (event) => {
       const interactive = event.target.closest("a, button, input, textarea, select, label");
@@ -471,9 +476,10 @@ function setupHomeFeaturedNavigation() {
       const price = Number(card.dataset.price || 0);
       const category = card.dataset.category || "maquiagem";
       const image = card.querySelector("img")?.getAttribute("src") || "";
+      const slug = card.dataset.slug || "";
       if (!name) return;
 
-      const href = `produto.html?produto=${encodeURIComponent(name)}&preco=${price}&categoria=${encodeURIComponent(category)}&imagem=${encodeURIComponent(image)}`;
+      const href = `produto.html?slug=${slug}&produto=${encodeURIComponent(name)}&preco=${price}&categoria=${encodeURIComponent(category)}&imagem=${encodeURIComponent(image)}`;
       window.location.href = href;
     });
   });
@@ -801,13 +807,10 @@ function setupHeroProductSlider() {
   setInterval(() => setByIndex(current + 1), 3200);
 }
 
-function setupProductDetailsPage() {
+async function setupProductDetailsPage() {
   const nameNode = document.getElementById("detail-product-name");
   const priceNode = document.getElementById("detail-product-price");
   const mainImage = document.getElementById("detail-main-image");
-  const thumb1 = document.getElementById("thumb-1");
-  const thumb2 = document.getElementById("thumb-2");
-  const thumb3 = document.getElementById("thumb-3");
   const qtyNode = document.getElementById("detail-qty");
   const minus = document.getElementById("detail-minus");
   const plus = document.getElementById("detail-plus");
@@ -816,76 +819,93 @@ function setupProductDetailsPage() {
   const descriptionNode = document.getElementById("detail-general-description");
   const whatsapp = document.getElementById("detail-whatsapp");
 
-  if (
-    !nameNode ||
-    !priceNode ||
-    !mainImage ||
-    !thumb1 ||
-    !thumb2 ||
-    !thumb3 ||
-    !qtyNode ||
-    !minus ||
-    !plus ||
-    !addCart ||
-    !favorite ||
-    !whatsapp
-  ) {
-    return;
-  }
+  if (!nameNode || !priceNode || !mainImage || !whatsapp) return;
 
   const params = new URLSearchParams(window.location.search);
-  const product = params.get("produto") || "Base Velvet Glow";
-  const price = Number(params.get("preco") || "69.9");
-  const category = params.get("categoria") || "maquiagem";
-  const image = params.get("imagem") || "https://images.pexels.com/photos/2533266/pexels-photo-2533266.jpeg?auto=compress&cs=tinysrgb&w=1200";
+  const slug = params.get("slug");
+  let productData = null;
 
-  const images = [image, image, image];
-  nameNode.textContent = product;
+  if (slug) {
+    try {
+      const resp = await fetch(`${PUBLIC_API_URL}/public/products/${slug}`);
+      if (resp.ok) productData = await resp.json();
+    } catch (_e) {}
+  }
+
+  const name = productData?.name || params.get("produto") || "Produto";
+  const price = productData?.price || Number(params.get("preco") || 0);
+  const category = productData?.category?.name || params.get("categoria") || "maquiagem";
+  const mainImgUrl = productData?.images?.[0]?.url || params.get("imagem") || "";
+  const images = productData?.images?.length
+    ? productData.images.map((i) => i.url)
+    : [mainImgUrl];
+
+  nameNode.textContent = name;
   priceNode.textContent = formatBRL(price);
   if (descriptionNode) {
-    descriptionNode.textContent = `${product} (${category}) com acabamento premium, excelente giro em loja e alta percepcao de valor para venda.`;
+    descriptionNode.textContent =
+      productData?.description ||
+      `${name} (${category}) com acabamento premium, excelente giro em loja e alta percepcao de valor para venda.`;
   }
-  mainImage.src = images[0];
-  thumb1.src = images[0];
-  thumb2.src = images[1];
-  thumb3.src = images[2];
 
-  const thumbs = Array.from(document.querySelectorAll(".detail-thumb"));
-  thumbs.forEach((button, index) => {
-    button.addEventListener("click", () => {
-      thumbs.forEach((item) => item.classList.remove("active"));
-      button.classList.add("active");
-      mainImage.src = images[index];
+  // Render Thumbnails
+  const thumbsContainer = document.querySelector(".detail-thumbs");
+  if (thumbsContainer) {
+    thumbsContainer.innerHTML = images
+      .map(
+        (img, i) => `
+      <button class="detail-thumb ${i === 0 ? "active" : ""}" type="button">
+        <img src="${img}" alt="Miniatura ${i + 1}" />
+      </button>
+    `,
+      )
+      .join("");
+
+    const thumbsButtons = Array.from(thumbsContainer.querySelectorAll(".detail-thumb"));
+    thumbsButtons.forEach((btn, i) => {
+      btn.addEventListener("click", () => {
+        thumbsButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        mainImage.src = images[i];
+      });
     });
-  });
+  }
 
-  minus.addEventListener("click", () => {
-    qtyNode.value = String(Math.max(1, Number(qtyNode.value) - 1));
-    updateWhatsappLink();
-  });
-  plus.addEventListener("click", () => {
-    qtyNode.value = String(Math.max(1, Number(qtyNode.value) + 1));
-    updateWhatsappLink();
-  });
-  qtyNode.addEventListener("input", () => {
-    qtyNode.value = String(Math.max(1, Number(qtyNode.value) || 1));
-    updateWhatsappLink();
-  });
+  mainImage.src = images[0] || mainImgUrl;
 
-  function updateWhatsappLink() {
-    const qty = Math.max(1, Number(qtyNode.value) || 1);
+  const updateWhatsappLink = () => {
+    const qty = Math.max(1, Number(qtyNode?.value) || 1);
     const total = formatBRL(price * qty);
     const message = encodeURIComponent(
-      `Oi! Quero este produto:\nProduto: ${product}\nCategoria: ${category}\nQuantidade: ${qty}\nValor unitario: ${formatBRL(price)}\nTotal: ${total}`,
+      `Oi! Quero este produto:\nProduto: ${name}\nCategoria: ${category}\nQuantidade: ${qty}\nValor unitario: ${formatBRL(price)}\nTotal: ${total}`,
     );
     whatsapp.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+  };
+
+  if (minus && qtyNode) {
+    minus.addEventListener("click", () => {
+      qtyNode.value = String(Math.max(1, Number(qtyNode.value) - 1));
+      updateWhatsappLink();
+    });
+  }
+  if (plus && qtyNode) {
+    plus.addEventListener("click", () => {
+      qtyNode.value = String(Math.max(1, Number(qtyNode.value) + 1));
+      updateWhatsappLink();
+    });
+  }
+  if (qtyNode) {
+    qtyNode.addEventListener("input", () => {
+      qtyNode.value = String(Math.max(1, Number(qtyNode.value) || 1));
+      updateWhatsappLink();
+    });
   }
 
-  addCart.addEventListener("click", () => {
-    const qty = Math.max(1, Number(qtyNode.value) || 1);
-    upsertCartItem(product, price, qty, image, category);
+  addCart?.addEventListener("click", () => {
+    const qty = Math.max(1, Number(qtyNode?.value) || 1);
+    upsertCartItem(name, price, qty, images[0] || mainImgUrl, category);
     renderCart();
-    qtyNode.value = "1";
+    if (qtyNode) qtyNode.value = "1";
     updateWhatsappLink();
     addCart.textContent = "Adicionado ao carrinho";
     setTimeout(() => {
@@ -893,8 +913,8 @@ function setupProductDetailsPage() {
     }, 1200);
   });
 
-  favorite.addEventListener("click", () => {
-    upsertFavoriteItem(product, price, image, category);
+  favorite?.addEventListener("click", () => {
+    upsertFavoriteItem(name, price, images[0] || mainImgUrl, category);
     renderFavorites();
     favorite.textContent = "Favoritado";
     setTimeout(() => {
@@ -925,7 +945,7 @@ async function initPage() {
   setupHomeFeaturedBuyButtons();
   setupHeroProductSlider();
   setupModernShowcaseCarousel();
-  setupProductDetailsPage();
+  await setupProductDetailsPage();
   loadCartFromStorage();
   loadFavoritesFromStorage();
   activateCategory("todos");
