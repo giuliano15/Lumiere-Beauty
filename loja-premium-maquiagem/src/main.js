@@ -477,13 +477,8 @@ function renderCart() {
   cartSubtotalNode.textContent = formatBRL(subtotal);
   cartTotalNode.textContent = formatBRL(totalValue);
 
-  const lines = items.map((item) => `- ${item.name} | Qtd: ${item.quantity} | ${formatBRL(item.price)}`);
-  const message =
-    "Oi! Vim pelo site Lumiere Beauty e quero finalizar este pedido:%0A" +
-    lines.join("%0A") +
-    `%0A%0ATotal estimado: ${encodeURIComponent(formatBRL(totalValue))}`;
-
-  checkoutNode.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+  const checkoutUrl = getWhatsAppCheckoutUrl(items);
+  checkoutNode.href = checkoutUrl;
 
   Array.from(document.querySelectorAll(".remove-item")).forEach((button) => {
     button.addEventListener("click", () => {
@@ -494,6 +489,18 @@ function renderCart() {
       renderCart();
     });
   });
+}
+
+function getWhatsAppCheckoutUrl(items) {
+  if (!items.length) return "#";
+  const totalValue = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
+  const lines = items.map((item) => `- ${item.name} | Qtd: ${item.quantity} | ${formatBRL(item.price)}`);
+  const message =
+    "Oi! Vim pelo site Lumiere Beauty e quero finalizar este pedido:%0A" +
+    lines.join("%0A") +
+    `%0A%0ATotal estimado: ${encodeURIComponent(formatBRL(totalValue))}`;
+
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
 }
 
 function renderFavorites() {
@@ -537,9 +544,20 @@ function renderFavorites() {
       if (!name) return;
       const item = favorites.get(name);
       if (!item) return;
+      
+      // Adiciona ao carrinho (se já não estiver, ou aumenta qtd se quiser, 
+      // mas aqui mantemos o padrão de 1)
       upsertCartItem(item.name, item.price, 1, item.image, item.category || "maquiagem");
+      
+      // Gera a URL do WhatsApp com o carrinho atualizado
+      const items = Array.from(cart.values());
+      const url = getWhatsAppCheckoutUrl(items);
+      
+      // Redireciona imediatamente
+      window.open(url, "_blank");
+      
+      // Atualiza a UI do carrinho em background
       renderCart();
-      openCart();
     });
   });
 
