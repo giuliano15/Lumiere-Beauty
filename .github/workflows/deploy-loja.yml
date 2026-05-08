@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'loja-premium-maquiagem/**'
 
 jobs:
   deploy-loja:
@@ -14,4 +12,5 @@ jobs:
     steps:
       - name: Trigger Vercel Deploy Hook
         run: |
-          curl -X POST "https://api.vercel.com/v1/integrations/deploy/prj_Ij2jpTuxLirdeS5cHs9T1wzmtm8K/rpst4hZope"
+          curl -s -X POST "https://api.vercel.com/v1/integrations/deploy/prj_Ij2jpTuxLirdeS5cHs9T1wzmtm8K/rpst4hZope"
+          echo "Deploy hook triggered!"
