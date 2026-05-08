@@ -838,6 +838,20 @@ async function setupProductDetailsPage() {
     } catch (_e) {}
   }
 
+  // Plano B: Se não tiver slug ou falhou, tenta buscar por nome na lista completa
+  if (!productData) {
+    const nameParam = params.get("produto");
+    if (nameParam) {
+      try {
+        const resp = await fetch(`${PUBLIC_API_URL}/public/products`);
+        if (resp.ok) {
+          const allProducts = await resp.json();
+          productData = allProducts.find(p => p.name === nameParam);
+        }
+      } catch (_e) {}
+    }
+  }
+
   const name = productData?.name || params.get("produto") || "Produto";
   const price = productData?.price || Number(params.get("preco") || 0);
   const category = productData?.category?.name || params.get("categoria") || "maquiagem";
