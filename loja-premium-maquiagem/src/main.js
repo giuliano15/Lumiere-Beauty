@@ -545,19 +545,11 @@ function renderFavorites() {
       const item = favorites.get(name);
       if (!item) return;
       
-      // Adiciona ao carrinho (se já não estiver, ou aumenta qtd se quiser, 
-      // mas aqui mantemos o padrão de 1)
-      upsertCartItem(item.name, item.price, 1, item.image, item.category || "maquiagem");
-      
-      // Gera a URL do WhatsApp com o carrinho atualizado
-      const items = Array.from(cart.values());
-      const url = getWhatsAppCheckoutUrl(items);
+      // Gera a URL do WhatsApp APENAS para este item dos favoritos
+      const url = getWhatsAppCheckoutUrl([{ ...item, quantity: 1 }]);
       
       // Redireciona imediatamente
       window.open(url, "_blank");
-      
-      // Atualiza a UI do carrinho em background
-      renderCart();
     });
   });
 
@@ -609,6 +601,16 @@ function setupCartDrawer() {
   document.getElementById("open-cart")?.addEventListener("click", openCart);
   document.getElementById("close-cart")?.addEventListener("click", closeCart);
   document.getElementById("cart-overlay")?.addEventListener("click", closeCart);
+
+  // Ao clicar em finalizar, limpa o carrinho e fecha o drawer
+  document.getElementById("checkout-whatsapp")?.addEventListener("click", () => {
+    setTimeout(() => {
+      cart.clear();
+      saveCartToStorage();
+      renderCart();
+      closeCart();
+    }, 500); // pequeno delay para o navegador processar o link
+  });
 }
 
 function openFavorites() {
