@@ -14,7 +14,7 @@ const EMPTY_FORM = {
   categoryId: "",
   isActive: true,
   isFeatured: false,
-  imagesText: "",
+  images: ["", "", "", "", ""],
 };
 
 function slugify(text) {
@@ -26,10 +26,9 @@ function slugify(text) {
     .replace(/(^-|-$)/g, "");
 }
 
-function buildImages(imagesText) {
-  return imagesText
-    .split("\n")
-    .map((l) => l.trim())
+function buildImages(imagesArray) {
+  return imagesArray
+    .map((url) => url?.trim())
     .filter(Boolean)
     .map((url, i) => ({ url, alt: `Imagem ${i + 1}`, sortOrder: i, isPrimary: i === 0 }));
 }
@@ -126,7 +125,11 @@ export function ProductsPage() {
         categoryId:  item.categoryId  || "",
         isActive:    item.isActive    ?? true,
         isFeatured:  item.isFeatured  ?? false,
-        imagesText:  (item.images || []).map((img) => img.url).join("\n"),
+        images:      (() => {
+          const arr = ["", "", "", "", ""];
+          (item.images || []).forEach((img, i) => { if(i < 5) arr[i] = img.url; });
+          return arr;
+        })(),
       });
     } else {
       setEditingId("");
@@ -153,7 +156,7 @@ export function ProductsPage() {
     });
   }
 
-  async function handleUpload(event) {
+  async function handleUpload(event, index = 0) {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
 
@@ -161,9 +164,14 @@ export function ProductsPage() {
     setError("");
     try {
       const result = await uploadFiles(files);
-      const current = form.imagesText.trim();
-      const merged = [...(current ? current.split("\n").filter(Boolean) : []), ...result.urls];
-      setField("imagesText", merged.join("\n"));
+      const nextImages = [...form.images];
+      
+      // Se for upload múltiplo no primeiro slot, tenta preencher os seguintes
+      result.urls.forEach((url, i) => {
+        if (index + i < 5) nextImages[index + i] = url;
+      });
+
+      setField("images", nextImages);
       if (result.urls[0]) setPreviewUrl(result.urls[0]);
       showToast("Imagens enviadas com sucesso!");
     } catch (err) {
@@ -199,7 +207,7 @@ export function ProductsPage() {
         categoryId:  form.categoryId,
         isActive:    form.isActive,
         isFeatured:  form.isFeatured,
-        images:      buildImages(form.imagesText),
+        images:      buildImages(form.images),
       };
 
       if (editingId) {
@@ -386,46 +394,67 @@ export function ProductsPage() {
               </div>
             )}
 
-            {/* ── Image upload ── */}
-            <div style={{ marginBottom: "1rem" }}>
-              <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "var(--adm-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.4rem" }}>
-                Foto do produto
+            {/* ── Image slots ── */}
+            <div style={{ marginBottom: "1.5rem" }}>
+              <div style={{ fontSize: "0.76rem", fontWeight: 600, color: "var(--adm-muted)", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: "0.8rem" }}>
+                Fotos do produto (Máx 5)
               </div>
-              <div
-                className="img-upload-area"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {(previewUrl || firstImgUrl) ? (
-                  <img src={previewUrl || firstImgUrl} alt="Preview" />
-                ) : (
-                  <>
-                    <span className="upload-icon">📷</span>
-                    <span className="upload-hint">
-                      {uploading ? "⏳ Enviando e otimizando..." : "Clique para enviar imagens"}
-                      <br />
-                      <small>JPG, PNG, WEBP — converte automaticamente para WebP</small>
-                    </span>
-                  </>
-                )}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "0.75rem" }}>
+                {form.images.map((url, i) => (
+                  <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
+                    <div 
+                      className="img-upload-slot" 
+                      onClick={() => document.getElementById(`file-input-${i}`).click()}
+                      style={{ 
+                        aspectRatio: "1", 
+                        border: "2px dashed var(--adm-border)", 
+                        borderRadius: "0.75rem", 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center", 
+                        cursor: "pointer",
+                        overflow: "hidden",
+                        background: "#fafafa",
+                        position: "relative"
+                      }}
+                    >
+                      {url ? (
+                        <img src={url} style={{ width: "100%", height: "100%", objectFit: "cover" }} alt={`Slot ${i+1}`} />
+                      ) : (
+                        <div style={{ textAlign: "center", color: "#999" }}>
+                          <span style={{ fontSize: "1.2rem", display: "block" }}>+</span>
+                          <span style={{ fontSize: "0.6rem" }}>Slot {i+1}</span>
+                        </div>
+                      )}
+                      {uploading && i === 0 && (
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem" }}>
+                          ⏳
+                        </div>
+                      )}
+                    </div>
+                    <input 
+                      id={`file-input-${i}`}
+                      type="file" 
+                      accept="image/*" 
+                      onChange={(e) => handleUpload(e, i)} 
+                      style={{ display: "none" }} 
+                    />
+                    <input 
+                      value={url} 
+                      onChange={(e) => {
+                        const next = [...form.images];
+                        next[i] = e.target.value;
+                        setField("images", next);
+                      }}
+                      placeholder={`URL ${i+1}`}
+                      style={{ fontSize: "0.7rem", padding: "0.4rem", minHeight: "30px", textAlign: "center" }}
+                    />
+                  </div>
+                ))}
               </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleUpload}
-                style={{ display: "none" }}
-              />
-              {(previewUrl || firstImgUrl) && (
-                <button
-                  type="button"
-                  className="btn ghost sm"
-                  style={{ marginTop: "0.4rem" }}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  {uploading ? "⏳ Enviando..." : "📤 Adicionar mais imagens"}
-                </button>
-              )}
+              <small style={{ marginTop: "0.5rem", display: "block", color: "var(--adm-muted)" }}>
+                A primeira foto será a principal. Você pode clicar no slot para subir um arquivo ou colar a URL diretamente.
+              </small>
             </div>
 
             {/* ── Name + Slug ── */}
@@ -533,21 +562,6 @@ export function ProductsPage() {
               />
             </label>
 
-            {/* ── URLs de imagens (manual) ── */}
-            <label style={{ marginBottom: "1rem" }}>
-              URLs das imagens (1 por linha)
-              <textarea
-                rows={3}
-                value={form.imagesText}
-                onChange={(e) => {
-                  setField("imagesText", e.target.value);
-                  const first = e.target.value.split("\n")[0]?.trim();
-                  if (first) setPreviewUrl(first);
-                }}
-                placeholder="https://res.cloudinary.com/..."
-              />
-              <small>As imagens enviadas pelo botão acima aparecem aqui automaticamente.</small>
-            </label>
 
             {/* ── Toggles ── */}
             <div className="form-grid-2" style={{ marginBottom: "0.5rem" }}>
