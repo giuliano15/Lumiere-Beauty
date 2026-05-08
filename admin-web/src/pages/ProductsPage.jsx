@@ -440,7 +440,7 @@ export function ProductsPage() {
                 />
               </label>
               <label>
-                Slug (URL)
+                Slug (Identificador na URL)
                 <input
                   value={form.slug}
                   onChange={(e) => setField("slug", e.target.value)}

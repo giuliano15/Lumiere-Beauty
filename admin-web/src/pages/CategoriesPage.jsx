@@ -87,7 +87,7 @@ export function CategoriesPage() {
             <input value={form.name} onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} required />
           </label>
           <label>
-            Slug
+            Slug (Identificador na URL)
             <input value={form.slug} onChange={(e) => setForm((prev) => ({ ...prev, slug: e.target.value }))} required />
           </label>
           <label className="form-full">
