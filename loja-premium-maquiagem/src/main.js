@@ -860,12 +860,24 @@ async function setupProductDetailsPage() {
     ? productData.images.map((i) => i.url)
     : [mainImgUrl];
 
+  const shortDescNode = document.querySelector(".detail-description");
+  const fullDescNode = document.getElementById("detail-general-description");
+  const metaNode = document.querySelector(".detail-meta");
+
   nameNode.textContent = name;
   priceNode.textContent = formatBRL(price);
-  if (descriptionNode) {
-    descriptionNode.textContent =
-      productData?.description ||
-      `${name} (${category}) com acabamento premium, excelente giro em loja e alta percepcao de valor para venda.`;
+
+  if (shortDescNode) {
+    shortDescNode.textContent = productData?.shortDesc || productData?.description?.substring(0, 120) + "..." || "Produto com acabamento premium e excelente aceitação.";
+  }
+
+  if (fullDescNode) {
+    fullDescNode.style.whiteSpace = "pre-line"; // Preserva quebras de linha
+    fullDescNode.textContent = productData?.description || "Descrição completa em breve.";
+  }
+
+  if (metaNode && productData) {
+    metaNode.innerHTML = `<strong>REF:</strong> ${productData.sku || "N/A"} &nbsp; <strong>Marca:</strong> ${productData.brand || "Lumiere Beauty"}`;
   }
 
   // Render Thumbnails
