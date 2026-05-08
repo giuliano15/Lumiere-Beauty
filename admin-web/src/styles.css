@@ -241,7 +241,7 @@ label {
 .check-row { display: flex; align-items: center; gap: 0.5rem; flex-direction: row; }
 .check-row input { width: auto; }
 
-input[type=text], input[type=number], input[type=email], input[type=password],
+input:not([type]), input[type=text], input[type=number], input[type=email], input[type=password],
 input[type=url], textarea, select {
   background: #fdfdfd;
   border: 1.5px solid var(--adm-border);
@@ -255,7 +255,8 @@ input[type=url], textarea, select {
   transition: all 0.2s ease;
   outline: none;
 }
-input:hover {
+input:not([type]):hover, input[type=text]:hover, input[type=number]:hover, 
+input[type=email]:hover, input[type=password]:hover, input[type=url]:hover {
   background: #fff;
   border-color: var(--adm-accent2);
 }
