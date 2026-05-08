@@ -17,10 +17,11 @@ function getStoredUser() {
 const NAV_MENU = [
   { id: "products",  label: "Produtos",       icon: "🛍️", section: "Catálogo" },
   { id: "categories",label: "Categorias",     icon: "🏷️", section: "Catálogo" },
-  { id: "sections-launches",  label: "Lançamentos",    icon: "🚀", section: "Vitrine" },
-  { id: "sections-highlights",label: "Destaques",     icon: "⭐", section: "Vitrine" },
-  { id: "sections",           label: "Gestão da Home", icon: "🏠", section: "Vitrine" },
-  { id: "settings",  label: "Configurações",  icon: "⚙️", section: "Sistema" },
+  { id: "sections-hero",      label: "Banner Topo",      icon: "🖼️", section: "Vitrine" },
+  { id: "sections-live",      label: "Vitrine Ofertas",  icon: "📺", section: "Vitrine" },
+  { id: "sections-launches",  label: "Lançamentos",      icon: "🚀", section: "Vitrine" },
+  { id: "sections-highlights",label: "Destaques",        icon: "⭐", section: "Vitrine" },
+  { id: "settings",           label: "Configurações",    icon: "⚙️", section: "Sistema" },
 ];
 
 export function App() {
@@ -101,13 +102,18 @@ export function App() {
         <div className="page-content">
           {currentTab === "products" ? <ProductsPage /> : null}
           {currentTab === "categories" ? <CategoriesPage /> : null}
+          {currentTab === "sections-hero" ? (
+            <HomeSectionsPage fixedType="HERO" title="Gestão do Banner Topo" />
+          ) : null}
+          {currentTab === "sections-live" ? (
+            <HomeSectionsPage fixedType="LIVE" title="Gestão da Vitrine de Ofertas" />
+          ) : null}
           {currentTab === "sections-launches" ? (
-            <HomeSectionsPage fixedType="LANCAMENTOS" title="Gestao de Lancamentos" />
+            <HomeSectionsPage fixedType="LANCAMENTOS" title="Gestão de Lançamentos" />
           ) : null}
           {currentTab === "sections-highlights" ? (
-            <HomeSectionsPage fixedType="DESTAQUES" title="Gestao de Destaques" />
+            <HomeSectionsPage fixedType="DESTAQUES" title="Gestão de Destaques" />
           ) : null}
-          {currentTab === "sections" ? <HomeSectionsPage title="Gestao de secoes da Home" /> : null}
           {currentTab === "settings" ? <SettingsPage /> : null}
         </div>
       </main>
