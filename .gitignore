@@ -17,3 +17,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Sensitive info
+Product Environment Credentials.txt
+*.txt
+*.pdf
+*.docx
