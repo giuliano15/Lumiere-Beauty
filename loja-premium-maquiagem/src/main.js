@@ -236,9 +236,11 @@ function buildHomeFeaturedItem(product) {
   const name = product?.name || "Produto";
   const price = Number(product?.price || 0);
   const categorySlug = normalizeCategorySlug(product?.category?.slug || product?.category?.name || "maquiagem");
+  const image = resolveProductImage(product);
+  
   const encodedName = encodeURIComponent(name);
   const encodedCategory = encodeURIComponent(categorySlug);
-  const encodedImage = encodeURIComponent(resolveProductImage(product));
+  const encodedImage = encodeURIComponent(image);
   const slug = product?.slug || "";
   const detailHref = `produto.html?slug=${slug}&produto=${encodedName}&preco=${price}&categoria=${encodedCategory}&imagem=${encodedImage}`;
 
