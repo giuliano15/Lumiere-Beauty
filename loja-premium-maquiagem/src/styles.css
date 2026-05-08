@@ -810,20 +810,33 @@ h1, h2, h3, h4 {
   color: var(--text-main);
 }
 
-.cart-item-content p {
-  margin: 0;
-  line-height: 1.2;
+.cart-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+  min-width: 0;
 }
 
-.cart-item-meta {
-  color: var(--text-muted);
-  font-size: 0.82rem;
+.cart-item-content p {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.cart-item-content strong {
+  font-size: 0.8rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+  color: var(--deep-berry);
 }
 
 .cart-item-total {
   color: var(--rose-accent);
-  font-weight: 600;
-  font-size: 0.88rem;
+  font-weight: 700;
+  font-size: 0.82rem;
 }
 
 .cart-qty-pill {
