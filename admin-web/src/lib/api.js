@@ -31,6 +31,11 @@ export async function apiFetch(path, options = {}) {
   });
 
   if (!response.ok) {
+    if (response.status === 401) {
+      localStorage.removeItem("admin_token");
+      localStorage.removeItem("admin_user");
+      window.dispatchEvent(new Event("admin-logout"));
+    }
     const body = await response.json().catch(() => ({}));
     throw new Error(body.message || "Erro na requisicao.");
   }

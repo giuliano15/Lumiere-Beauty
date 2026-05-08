@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LoginPage } from "./pages/LoginPage";
 import { CategoriesPage } from "./pages/CategoriesPage";
 import { ProductsPage } from "./pages/ProductsPage";
@@ -27,13 +27,11 @@ export function App() {
   const [user, setUser] = useState(getStoredUser());
   const [currentTab, setCurrentTab] = useState("products");
 
-  if (!user) return <LoginPage onSuccess={setUser} />;
-
-  function logout() {
-    localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_user");
-    setUser(null);
-  }
+  useEffect(() => {
+    const handleLogout = () => logout();
+    window.addEventListener("admin-logout", handleLogout);
+    return () => window.removeEventListener("admin-logout", handleLogout);
+  }, []);
 
   // Group menu items by section
   const sections = useMemo(() => {
@@ -44,6 +42,14 @@ export function App() {
     });
     return map;
   }, []);
+
+  function logout() {
+    localStorage.removeItem("admin_token");
+    localStorage.removeItem("admin_user");
+    setUser(null);
+  }
+
+  if (!user) return <LoginPage onSuccess={setUser} />;
 
   return (
     <div className="layout">
